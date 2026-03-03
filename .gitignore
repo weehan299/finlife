@@ -11,6 +11,8 @@ node_modules/
 # Next.js
 .next/
 out/
+.vercel/
+.turbo/
 
 # Prisma generated client
 /prisma/generated/
@@ -20,6 +22,10 @@ src/generated/
 # Build output
 dist/
 build/
+coverage/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+.eslintcache
 
 # Logs
 *.log
