@@ -225,7 +225,7 @@ async function main() {
     prisma.expense.create({
       data: {
         userId: alice.id,
-        category: "DEBT_PAYMENT",
+        category: "ESSENTIAL_FIXED",
         label: "Student Loan + Car Payments",
         monthlyAmount: "750.00",
         stressMonthlyAmount: "750.00",

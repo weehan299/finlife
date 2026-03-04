@@ -228,7 +228,6 @@ describe("Expense", () => {
       "ESSENTIAL_FIXED",
       "ESSENTIAL_VARIABLE",
       "DISCRETIONARY",
-      "DEBT_PAYMENT",
     ] as const;
 
     for (const category of categories) {
@@ -240,7 +239,7 @@ describe("Expense", () => {
     }
 
     const count = await prisma.expense.count({ where: { userId: user.id } });
-    expect(count).toBe(4);
+    expect(count).toBe(3);
   });
 
   it("defaults isEssential to true and stressMonthlyAmount to null", async () => {

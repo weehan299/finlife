@@ -1,9 +1,8 @@
+import { withApi } from "@/lib/api/handler";
+import { notImplemented } from "@/lib/api/response";
 import { requireAuth } from "@/lib/auth";
 
-export async function GET() {
+export const GET = withApi(async () => {
   await requireAuth();
-  return Response.json({
-    ok: false,
-    error: { code: "NOT_IMPLEMENTED", message: "GET /api/snapshot" },
-  }, { status: 501 });
-}
+  return notImplemented("GET /api/snapshot");
+});

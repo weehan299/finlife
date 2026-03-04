@@ -48,7 +48,6 @@ enum ExpenseCategory {
   ESSENTIAL_FIXED
   ESSENTIAL_VARIABLE
   DISCRETIONARY
-  DEBT_PAYMENT
 }
 
 enum GoalType {
@@ -198,6 +197,7 @@ model Income {
 }
 
 model Expense {
+  // expense refers to both fixed and variable expenses, aim to track things like daily expenses or one time expense
   id                  String          @id @default(cuid())
   userId              String
   category            ExpenseCategory

@@ -1,19 +1,33 @@
 import { auth } from "@clerk/nextjs/server";
+import { ApiError } from "@/lib/api/error";
 import { prisma } from "@/lib/db";
 
-export async function requireAuth(): Promise<string> {
-  const { userId } = await auth();
+type AuthContext = {
+  clerkUserId: string;
+  userId: string;
+};
 
-  if (!userId) {
-    throw new Error("UNAUTHORIZED");
+export async function requireAuthContext(): Promise<AuthContext> {
+  const { userId: clerkUserId } = await auth();
+
+  if (!clerkUserId) {
+    throw ApiError.unauthorized();
   }
 
   const user = await prisma.user.upsert({
-    where: { clerkUserId: userId },
+    where: { clerkUserId },
     update: {},
-    create: { clerkUserId: userId },
+    create: { clerkUserId },
     select: { id: true },
   });
 
-  return user.id;
+  return {
+    clerkUserId,
+    userId: user.id,
+  };
+}
+
+export async function requireAuth(): Promise<string> {
+  const { userId } = await requireAuthContext();
+  return userId;
 }

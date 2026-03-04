@@ -1,155 +1,120 @@
-# FinLife
+# CLAUDE.md
 
-Personal finance decision engine for modeling goals, assets, liabilities, incomes, expenses, and running what-if decisions.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Stack
 
-- Framework: Next.js 16 (App Router) + React 19 + TypeScript (strict)
-- Styling: Tailwind CSS v4
-- Linting: ESLint (flat config + `eslint-config-next`)
-- Database: PostgreSQL 16 + Prisma 7.4
-- Auth: Clerk
-- Validation: Zod
-- Testing: Vitest 4 + tsx
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS v4 · PostgreSQL 16 · Prisma 7.4 · Clerk · Zod · Vitest 4
 
-## How the Project Structure Works
-
-The repo is split by responsibility so UI, API, business logic, validation, and persistence stay decoupled.
-
-```text
-finlife/
-├── prisma/
-│   ├── schema.prisma            # Canonical data model (User, Asset, Goal, Decision, etc.)
-│   ├── migrations/              # Versioned schema changes
-│   └── seed.ts                  # Seed data (Alice + Bob personas)
-├── src/
-│   ├── app/                     # Next.js App Router
-│   │   ├── (auth)/              # Public auth routes
-│   │   │   ├── sign-in/[[...sign-in]]/page.tsx
-│   │   │   └── sign-up/[[...sign-up]]/page.tsx
-│   │   ├── (main)/              # Authenticated application shell + pages
-│   │   │   ├── layout.tsx
-│   │   │   ├── overview/page.tsx
-│   │   │   ├── decisions/page.tsx
-│   │   │   ├── decisions/new/page.tsx
-│   │   │   ├── decisions/[id]/page.tsx
-│   │   │   ├── goals/page.tsx
-│   │   │   ├── goals/[id]/page.tsx
-│   │   │   └── settings/page.tsx
-│   │   ├── api/                 # REST/JSON route handlers (API-first boundary)
-│   │   │   ├── baseline/route.ts
-│   │   │   ├── snapshot/route.ts
-│   │   │   ├── decisions/route.ts
-│   │   │   ├── goals/route.ts
-│   │   │   └── settings/route.ts
-│   │   ├── globals.css          # Tailwind import
-│   │   ├── layout.tsx           # Root layout + ClerkProvider
-│   │   └── page.tsx             # Landing page
-│   ├── components/
-│   │   ├── ui/                  # UI primitives (reserved)
-│   │   ├── metrics/             # Metric presentation components
-│   │   ├── forms/               # Form components
-│   │   └── charts/              # Chart components
-│   ├── lib/
-│   │   ├── db.ts                # Prisma client singleton (PrismaPg adapter)
-│   │   ├── auth.ts              # `requireAuth()` + user upsert
-│   │   └── defaults.ts          # Default assumptions constants
-│   ├── schemas/                 # Zod schemas for API + forms
-│   ├── services/                # Domain/business logic (framework-agnostic)
-│   └── types/                   # Shared TypeScript interfaces/types
-├── tests/
-│   ├── setup.ts
-│   ├── helpers/
-│   └── integration/             # DB integration suites (67 tests)
-├── src/middleware.ts            # Clerk route protection
-├── next.config.ts
-├── postcss.config.mjs
-├── eslint.config.mjs
-├── vitest.config.ts
-└── compose.yaml
-```
-
-## Layer Responsibilities
-
-- Presentation (`src/app`, `src/components`): page rendering, layout, user interactions.
-- API (`src/app/api`): JSON endpoint contracts for web and future mobile clients.
-- Domain (`src/services`): pure TS financial logic (snapshot, decision, goals, projection).
-- Validation (`src/schemas`): Zod schemas shared by route handlers and forms.
-- Data access (`src/lib/db.ts` + Prisma): persistence and relational constraints.
-
-This API-first layout ensures mobile clients can call the same `/api/*` endpoints without backend redesign.
-
-## Runbook: Commands
-
-### 1) Install Dependencies
+## Commands
 
 ```bash
-npm install
-```
+# Dev server
+npm run dev
 
-### 2) Database Lifecycle
+# Quality gates (run in this order locally)
+npm run lint
+npx tsc --noEmit
+npm test
+npm run build
 
-```bash
-# Start PostgreSQL
-docker compose up -d
+# Single test file / pattern
+npx vitest run tests/integration/user-settings.test.ts
+npx vitest run -t "cascade"
 
-# Verify DB container
-docker compose ps
-
-# Generate Prisma client
-npx prisma generate
-
-# Create migration after schema edits
-npx prisma migrate dev --name <migration_name>
-
-# Apply migrations (CI/production)
-npx prisma migrate deploy
-
-# Seed local database
+# Database
+docker compose up -d                          # start local Postgres
+npx prisma generate                           # after schema changes
+npx prisma migrate dev --name <name>          # create + apply migration locally
+npx prisma migrate deploy                     # apply migrations (CI / Neon)
 npx prisma db seed
-
-# Optional GUI
 npx prisma studio
 ```
 
-### 3) Development Server
+### Neon (cloud) database — migrations only
+
+`prisma migrate deploy` requires the **direct** connection (no `-pooler` in host). The `.env.example` shows the pooler URL (for app queries). Strip `-pooler` from the hostname and drop `channel_binding=require` when running DDL:
 
 ```bash
-npm run dev
+DATABASE_URL="postgresql://...@ep-xxx.<region>.aws.neon.tech/neondb?sslmode=require" \
+  npx prisma migrate deploy
 ```
 
-### 4) Quality Gates (Local CI Sequence)
+If a migration was previously attempted and failed, resolve before re-deploying:
 
 ```bash
-# Lint app code
-npm run lint
-
-# Type check
-npx tsc --noEmit
-
-# Run all integration tests (67 tests)
-npm test
-
-# Production build
-npm run build
+DATABASE_URL="..." npx prisma migrate resolve --rolled-back <migration_name>
 ```
 
-### 5) Test Variants
+## Architecture
 
-```bash
-# Watch mode
-npm run test:watch
+### Layer responsibilities
 
-# Single test file
-npx vitest run tests/integration/user-settings.test.ts
+| Layer | Location | Role |
+|---|---|---|
+| Presentation | `src/app/(main)/` | Page rendering, layout |
+| API | `src/app/api/*/route.ts` | JSON contracts for web + future mobile clients |
+| Domain | `src/services/` | Pure TS financial logic (no framework deps) |
+| Validation | `src/schemas/` | Zod schemas shared by route handlers and forms |
+| Data access | `src/lib/db.ts` + Prisma | Persistence via PrismaPg adapter |
 
-# Pattern filter
-npx vitest run -t "cascade"
+### Route handler pattern
+
+Every route handler wraps with `withApi()` and calls `requireAuth()`:
+
+```ts
+export const GET = withApi(async (req: Request) => {
+  const userId = await requireAuth(); // throws ApiError.unauthorized() if not logged in
+  // ...
+  return ok(data);           // { ok: true, data }
+  // or:
+  return fail(ApiError.notFound()); // { ok: false, error: { code, message } }
+});
 ```
 
-## Notes
+- `withApi` (`src/lib/api/handler.ts`): catches `ApiError`, `ZodError`, and unexpected errors uniformly.
+- `requireAuth` (`src/lib/auth.ts`): resolves Clerk session → upserts `User` row → returns internal `userId` (Prisma cuid, not Clerk id). Use `requireAuthContext()` when you need both ids.
+- All responses use `ok()` / `fail()` from `src/lib/api/response.ts` for a consistent `{ ok, data|error }` envelope.
 
-- Prisma connection uses the Prisma 7 adapter pattern via `@prisma/adapter-pg` in `src/lib/db.ts`.
-- Monetary fields use `Decimal(14,2)` and rates use decimal fractions (example: `0.03` for 3%).
-- All domain data is user-scoped and relational deletes cascade from `User`.
-- Current API routes/services are scaffold stubs and intended to be implemented next.
+### Auth & route protection
+
+`src/proxy.ts` (not `middleware.ts`) is the Clerk middleware for Next.js 16. Public routes: `/`, `/sign-in(.*)`, `/sign-up(.*)`. Everything else is protected.
+
+`src/lib/env.ts` validates required env vars at startup (fails fast). Required: `DATABASE_URL`, `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+
+### Database schema
+
+10 models, 12 enums. All IDs are `cuid()`, all foreign keys cascade on delete.
+
+**Core graph:** `User` → `UserSettings` (1:1), `Asset[]`, `Liability[]`, `Income[]`, `Expense[]`, `Goal[]`, `Decision[]`
+
+**Join tables:** `GoalAssetAllocation` (Goal ↔ Asset), `DecisionGoalImpact` (Decision ↔ Goal)
+
+**Numeric conventions:**
+- Money: `Decimal @db.Decimal(14, 2)` — e.g. `"1500.00"`
+- Rates/percentages: `Decimal @db.Decimal(5, 4)` stored as decimal fractions — e.g. `0.03` = 3%
+- The PrismaPg adapter strips trailing zeros from Decimal results (e.g. `"0.03"` not `"0.0300"`); use `Number()` + `toBeCloseTo()` in tests for Decimal assertions.
+
+**`Decision` model** stores inputs/results as JSON columns (`inputs`, `assumptionsSnapshot`, `baselineSnapshot`, `resultSnapshot`) and tracks `verdict` + `confidenceLevel` after evaluation.
+
+### Services (currently stubs)
+
+All domain logic lives in `src/services/`. These are stub implementations and are the primary area for future development:
+
+- `snapshot.service.ts` — builds `FinancialSnapshot` (totals: assets, liabilities, income, expenses, surplus)
+- `decision.service.ts` — evaluates a decision against guardrails, returns `DecisionResult` with `verdict` + per-guardrail statuses
+- `goal.service.ts` — computes `GoalProgress` (percent complete, months to target)
+- `projection.service.ts` — time-series net worth projection (`ProjectionResult`)
+
+Default assumption constants are in `src/lib/defaults.ts`; per-user overrides live in `UserSettings`.
+
+### Testing
+
+Integration tests only (`tests/integration/`). Tests run sequentially (`fileParallelism: false`) against a real local Postgres DB. Cleanup truncates `"User"` with CASCADE between tests.
+
+Test helpers:
+- `tests/helpers/factories.ts` — typed factory functions for every model
+- `tests/helpers/cleanup.ts` — `TRUNCATE TABLE "User" CASCADE`
+- `tests/helpers/prisma.ts` — shared Prisma client for tests
+
+Seed personas: Alice (`DETAILED` mode, full data graph) and Bob (`QUICK` mode, minimal).

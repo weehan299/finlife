@@ -1,17 +1,13 @@
+import { withApi } from "@/lib/api/handler";
+import { notImplemented } from "@/lib/api/response";
 import { requireAuth } from "@/lib/auth";
 
-export async function GET() {
+export const GET = withApi(async () => {
   await requireAuth();
-  return Response.json({
-    ok: false,
-    error: { code: "NOT_IMPLEMENTED", message: "GET /api/baseline" },
-  }, { status: 501 });
-}
+  return notImplemented("GET /api/baseline");
+});
 
-export async function PUT() {
+export const PUT = withApi(async () => {
   await requireAuth();
-  return Response.json({
-    ok: false,
-    error: { code: "NOT_IMPLEMENTED", message: "PUT /api/baseline" },
-  }, { status: 501 });
-}
+  return notImplemented("PUT /api/baseline");
+});

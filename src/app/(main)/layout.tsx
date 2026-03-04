@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import NavLink from "./NavLink";
 
 const navItems = [
   { href: "/overview", label: "Overview" },
@@ -19,13 +19,9 @@ export default function MainLayout({
         <h2 className="mb-4 text-lg font-semibold">FinLife</h2>
         <nav className="space-y-2">
           {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="block rounded px-2 py-1 text-sm hover:bg-gray-100"
-            >
+            <NavLink key={item.href} href={item.href}>
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
       </aside>
