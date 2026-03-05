@@ -11,9 +11,17 @@ function mockAuth(userId: string | null) {
   vi.mocked(auth).mockResolvedValue({ userId } as any);
 }
 
-type RouteModule = Record<string, (req: Request) => Promise<Response>>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RouteModule = Record<string, (...args: any[]) => Promise<Response>>;
 
-const routes: { path: string; method: string; module: string }[] = [
+type RouteEntry = {
+  path: string;
+  method: string;
+  module: string;
+  params?: Promise<{ id: string }>;
+};
+
+const routes: RouteEntry[] = [
   { path: "/api/settings", method: "GET", module: "@/app/api/settings/route" },
   { path: "/api/settings", method: "PUT", module: "@/app/api/settings/route" },
   { path: "/api/goals", method: "GET", module: "@/app/api/goals/route" },
@@ -23,20 +31,46 @@ const routes: { path: string; method: string; module: string }[] = [
   { path: "/api/snapshot", method: "GET", module: "@/app/api/snapshot/route" },
   { path: "/api/baseline", method: "GET", module: "@/app/api/baseline/route" },
   { path: "/api/baseline", method: "PUT", module: "@/app/api/baseline/route" },
+  {
+    path: "/api/baseline/assets/fake-id",
+    method: "PATCH",
+    module: "@/app/api/baseline/assets/[id]/route",
+    params: Promise.resolve({ id: "fake-id" }),
+  },
+  {
+    path: "/api/baseline/liabilities/fake-id",
+    method: "PATCH",
+    module: "@/app/api/baseline/liabilities/[id]/route",
+    params: Promise.resolve({ id: "fake-id" }),
+  },
+  {
+    path: "/api/baseline/income/fake-id",
+    method: "PATCH",
+    module: "@/app/api/baseline/income/[id]/route",
+    params: Promise.resolve({ id: "fake-id" }),
+  },
+  {
+    path: "/api/baseline/expenses/fake-id",
+    method: "PATCH",
+    module: "@/app/api/baseline/expenses/[id]/route",
+    params: Promise.resolve({ id: "fake-id" }),
+  },
 ];
 
 describe("API route auth guards", () => {
-  describe.each(routes)("$method $path", ({ path, method, module }) => {
+  describe.each(routes)("$method $path", ({ path, method, module: mod, params }) => {
     it("returns 401 UNAUTHORIZED when not authenticated", async () => {
       mockAuth(null);
 
-      const mod: RouteModule = await import(module);
-      const handler = mod[method];
+      const routeModule: RouteModule = await import(mod);
+      const handler = routeModule[method];
       const req = new Request(`http://localhost:3000${path}`, {
         method,
       });
 
-      const res = await handler(req);
+      const res = params
+        ? await handler(req, { params })
+        : await handler(req);
       const body = await res.json();
 
       expect(res.status).toBe(401);
