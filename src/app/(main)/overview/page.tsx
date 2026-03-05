@@ -1,3 +1,5 @@
+import OverviewContent from "./OverviewContent";
+
 export default function OverviewPage() {
-  return <h1 className="text-2xl font-semibold">Overview (placeholder)</h1>;
+  return <OverviewContent />;
 }

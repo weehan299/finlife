@@ -113,6 +113,10 @@ export const PUT = withApi(async (req: Request) => {
           }),
         ]
       : []),
+    prisma.user.update({
+      where: { id: userId },
+      data: { onboardingComplete: true, mode: quick ? "QUICK" : "DETAILED" },
+    }),
   ]);
 
   const user = await prisma.user.findUniqueOrThrow({
