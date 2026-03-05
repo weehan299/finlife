@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock("@clerk/nextjs/server", () => ({ auth: vi.fn() }));
+vi.mock("@clerk/nextjs/server", () => ({
+  auth: vi.fn(),
+  currentUser: vi.fn(),
+}));
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { requireAuth, requireAuthContext } from "@/lib/auth";
 import { ApiError } from "@/lib/api/error";
 import { prisma } from "../helpers/prisma";
@@ -12,6 +15,14 @@ beforeEach(cleanDatabase);
 
 function mockAuth(userId: string | null) {
   vi.mocked(auth).mockResolvedValue({ userId } as any);
+}
+
+function mockCurrentUser(email: string | null) {
+  vi.mocked(currentUser).mockResolvedValue(
+    email
+      ? ({ emailAddresses: [{ emailAddress: email }] } as any)
+      : null,
+  );
 }
 
 describe("requireAuth", () => {
@@ -89,5 +100,37 @@ describe("requireAuthContext", () => {
 
     const count = await prisma.user.count();
     expect(count).toBe(2);
+  });
+
+  it("stores email from Clerk on first auth call", async () => {
+    mockAuth("clerk_test_email_user");
+    mockCurrentUser("alice@example.com");
+
+    const ctx = await requireAuthContext();
+    const user = await prisma.user.findUnique({ where: { id: ctx.userId } });
+
+    expect(user!.email).toBe("alice@example.com");
+  });
+
+  it("updates email on subsequent calls when changed in Clerk", async () => {
+    mockAuth("clerk_test_email_update");
+    mockCurrentUser("old@example.com");
+    await requireAuthContext();
+
+    mockCurrentUser("new@example.com");
+    const ctx = await requireAuthContext();
+    const user = await prisma.user.findUnique({ where: { id: ctx.userId } });
+
+    expect(user!.email).toBe("new@example.com");
+  });
+
+  it("stores null email when Clerk user has no email addresses", async () => {
+    mockAuth("clerk_test_no_email");
+    vi.mocked(currentUser).mockResolvedValue({ emailAddresses: [] } as any);
+
+    const ctx = await requireAuthContext();
+    const user = await prisma.user.findUnique({ where: { id: ctx.userId } });
+
+    expect(user!.email).toBeNull();
   });
 });

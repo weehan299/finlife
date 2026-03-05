@@ -16,6 +16,7 @@ async function main() {
   const alice = await prisma.user.create({
     data: {
       clerkUserId: "clerk_alice_001",
+      email: "alice@example.com",
       displayName: "Alice Chen",
       onboardingComplete: true,
       mode: "DETAILED",
@@ -416,6 +417,7 @@ async function main() {
   const bob = await prisma.user.create({
     data: {
       clerkUserId: "clerk_bob_002",
+      email: "bob@example.com",
       displayName: "Bob Martinez",
       onboardingComplete: false,
       mode: "QUICK",

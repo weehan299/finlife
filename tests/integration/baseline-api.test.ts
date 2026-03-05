@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock("@clerk/nextjs/server", () => ({ auth: vi.fn() }));
+vi.mock("@clerk/nextjs/server", () => ({
+  auth: vi.fn(),
+  currentUser: vi.fn().mockResolvedValue({ emailAddresses: [] }),
+}));
 
 import { auth } from "@clerk/nextjs/server";
 import { cleanDatabase } from "../helpers/cleanup";

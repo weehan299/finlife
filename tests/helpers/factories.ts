@@ -15,6 +15,7 @@ export async function createUser(overrides: UserOverrides = {}) {
   return prisma.user.create({
     data: {
       clerkUserId: uniqueClerkId(),
+      email: `test_${counter}@example.com`,
       ...overrides,
     },
   });
