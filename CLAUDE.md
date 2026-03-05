@@ -33,6 +33,7 @@ npx prisma studio
 
 ### Neon (cloud) database — migrations only
 
+Get the Neon database URL from .env
 `prisma migrate deploy` requires the **direct** connection (no `-pooler` in host). The `.env.example` shows the pooler URL (for app queries). Strip `-pooler` from the hostname and drop `channel_binding=require` when running DDL:
 
 ```bash
