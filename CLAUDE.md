@@ -118,3 +118,9 @@ Test helpers:
 - `tests/helpers/prisma.ts` — shared Prisma client for tests
 
 Seed personas: Alice (`DETAILED` mode, full data graph) and Bob (`QUICK` mode, minimal).
+
+# Subagent Strategy
+- Always and aggressively offload online research (eg, docs), codebase exploration, and log analysis to subagents.
+- When you're about to check logs, defer that to a haiku subagent.
+- For complex problems you're going around in circles with, get a fresh perspective by asking subagents.
+- When spawning a subagent, include a "Why" in the subagent's system prompt because it will help it filter the signal from the noise.
