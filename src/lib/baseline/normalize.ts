@@ -84,5 +84,5 @@ export function normalizeQuickBaseline(
     });
   }
 
-  return { assets, liabilities, incomes, expenses };
+  return { dateOfBirth: input.dateOfBirth, assets, liabilities, incomes, expenses };
 }

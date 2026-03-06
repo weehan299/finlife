@@ -97,6 +97,7 @@ model User {
   clerkUserId        String    @unique
   email              String?
   displayName        String?
+  dateOfBirth        DateTime?
   onboardingComplete Boolean   @default(false)
   mode               InputMode @default(QUICK)
   createdAt          DateTime  @default(now())

@@ -18,6 +18,7 @@ async function main() {
       clerkUserId: "clerk_alice_001",
       email: "alice@example.com",
       displayName: "Alice Chen",
+      dateOfBirth: new Date("1990-03-15"),
       onboardingComplete: true,
       mode: "DETAILED",
       settings: {
@@ -419,6 +420,7 @@ async function main() {
       clerkUserId: "clerk_bob_002",
       email: "bob@example.com",
       displayName: "Bob Martinez",
+      dateOfBirth: new Date("1988-07-22"),
       onboardingComplete: false,
       mode: "QUICK",
       settings: {

@@ -38,6 +38,7 @@ const fields = [
 type FieldName = (typeof fields)[number]["name"];
 
 export default function QuickSetupForm({ onComplete }: QuickSetupFormProps) {
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [values, setValues] = useState<Record<FieldName, string>>({
     monthlyTakeHome: "",
     monthlyEssentialExpenses: "",
@@ -67,6 +68,11 @@ export default function QuickSetupForm({ onComplete }: QuickSetupFormProps) {
       }
     }
 
+    if (!dateOfBirth) {
+      setError("Date of birth is required.");
+      return;
+    }
+
     const hasValue = Object.values(nums).some((n) => n > 0);
     if (!hasValue) {
       setError("Please fill in at least one field.");
@@ -78,7 +84,7 @@ export default function QuickSetupForm({ onComplete }: QuickSetupFormProps) {
       const res = await fetch("/api/baseline", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nums),
+        body: JSON.stringify({ ...nums, dateOfBirth }),
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
@@ -103,6 +109,26 @@ export default function QuickSetupForm({ onComplete }: QuickSetupFormProps) {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label
+            htmlFor="dateOfBirth"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Date of birth
+          </label>
+          <input
+            id="dateOfBirth"
+            type="date"
+            required
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 py-2 px-3 text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            Helps calculate things like years to retirement
+          </p>
+        </div>
+
         {fields.map((f) => (
           <div key={f.name}>
             <label

@@ -146,6 +146,7 @@ describe("PUT /api/baseline (detailed)", () => {
     mockAuth(user.clerkUserId);
 
     const payload = {
+      dateOfBirth: "1990-05-20",
       assets: [{ category: "SAVINGS", label: "Emergency Fund", value: 10000 }],
       liabilities: [
         { category: "CREDIT_CARD", label: "Visa", balance: 2000 },
@@ -183,6 +184,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         assets: [{ category: "SAVINGS", label: "New asset", value: 500 }],
       }),
     );
@@ -206,6 +208,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         assets: [{ category: "INVALID", label: "Bad", value: 100 }],
       }),
     );
@@ -220,6 +223,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         assets: [{ category: "SAVINGS", value: 100 }],
       }),
     );
@@ -234,6 +238,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         assets: [{ category: "SAVINGS", label: "Bad", value: -100 }],
       }),
     );
@@ -248,7 +253,7 @@ describe("PUT /api/baseline (detailed)", () => {
     await createIncome(user.id);
 
     const { PUT } = await import("@/app/api/baseline/route");
-    const res = await PUT(json({ assets: [], incomes: [] }));
+    const res = await PUT(json({ dateOfBirth: "1990-05-20", assets: [], incomes: [] }));
     const body = await res.json();
 
     expect(body.data.assets).toHaveLength(0);
@@ -264,6 +269,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         assets: [{ category: "SAVINGS", label: "A's new", value: 1000 }],
       }),
     );
@@ -286,6 +292,7 @@ describe("PUT /api/baseline (quick mode)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         totalSavings: 20000,
         totalInvestments: 50000,
         totalDebt: 10000,
@@ -308,7 +315,7 @@ describe("PUT /api/baseline (quick mode)", () => {
     mockAuth(user.clerkUserId);
 
     const { PUT } = await import("@/app/api/baseline/route");
-    const res = await PUT(json({ totalSavings: 5000 }));
+    const res = await PUT(json({ dateOfBirth: "1990-05-20", totalSavings: 5000 }));
     const body = await res.json();
 
     expect(body.data.assets[0].provenance).toBe("USER_ESTIMATED");
@@ -321,6 +328,7 @@ describe("PUT /api/baseline (quick mode)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
+        dateOfBirth: "1990-05-20",
         totalSavings: 5000,
         totalDebt: 0,
       }),
@@ -339,11 +347,55 @@ describe("PUT /api/baseline (quick mode)", () => {
     await createAsset(user.id, { label: "Old" });
 
     const { PUT } = await import("@/app/api/baseline/route");
-    const res = await PUT(json({ totalSavings: 1000 }));
+    const res = await PUT(json({ dateOfBirth: "1990-05-20", totalSavings: 1000 }));
     const body = await res.json();
 
     expect(body.data.assets).toHaveLength(1);
     expect(body.data.assets[0].label).toBe("Savings");
+  });
+});
+
+// ─── PUT /api/baseline — dateOfBirth ────────────────────
+
+describe("PUT /api/baseline (dateOfBirth)", () => {
+  it("persists dateOfBirth on the User record", async () => {
+    const user = await createUser();
+    mockAuth(user.clerkUserId);
+
+    const { PUT } = await import("@/app/api/baseline/route");
+    const res = await PUT(
+      json({ dateOfBirth: "1995-08-10", totalSavings: 1000 }),
+    );
+    expect(res.status).toBe(200);
+
+    const updated = await prisma.user.findUniqueOrThrow({
+      where: { id: user.id },
+    });
+    expect(updated.dateOfBirth!.toISOString().slice(0, 10)).toBe("1995-08-10");
+  });
+
+  it("rejects quick payload without dateOfBirth", async () => {
+    const user = await createUser();
+    mockAuth(user.clerkUserId);
+
+    const { PUT } = await import("@/app/api/baseline/route");
+    const res = await PUT(json({ totalSavings: 1000 }));
+
+    expect(res.status).toBe(400);
+  });
+
+  it("rejects detailed payload without dateOfBirth", async () => {
+    const user = await createUser();
+    mockAuth(user.clerkUserId);
+
+    const { PUT } = await import("@/app/api/baseline/route");
+    const res = await PUT(
+      json({
+        assets: [{ category: "SAVINGS", label: "Test", value: 100 }],
+      }),
+    );
+
+    expect(res.status).toBe(400);
   });
 });
 

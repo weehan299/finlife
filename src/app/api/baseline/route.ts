@@ -80,44 +80,42 @@ export const PUT = withApi(async (req: Request) => {
     ? normalizeQuickBaseline(quickBaselineInputSchema.parse(body))
     : baselineInputSchema.parse(body);
 
-  await prisma.$transaction([
-    prisma.asset.deleteMany({ where: { userId } }),
-    prisma.liability.deleteMany({ where: { userId } }),
-    prisma.income.deleteMany({ where: { userId } }),
-    prisma.expense.deleteMany({ where: { userId } }),
-    ...(validated.assets.length > 0
-      ? [
-          prisma.asset.createMany({
-            data: validated.assets.map((a) => ({ ...a, userId })),
-          }),
-        ]
-      : []),
-    ...(validated.liabilities.length > 0
-      ? [
-          prisma.liability.createMany({
-            data: validated.liabilities.map((l) => ({ ...l, userId })),
-          }),
-        ]
-      : []),
-    ...(validated.incomes.length > 0
-      ? [
-          prisma.income.createMany({
-            data: validated.incomes.map((i) => ({ ...i, userId })),
-          }),
-        ]
-      : []),
-    ...(validated.expenses.length > 0
-      ? [
-          prisma.expense.createMany({
-            data: validated.expenses.map((e) => ({ ...e, userId })),
-          }),
-        ]
-      : []),
-    prisma.user.update({
+  await prisma.$transaction(async (tx) => {
+    await tx.asset.deleteMany({ where: { userId } });
+    await tx.liability.deleteMany({ where: { userId } });
+    await tx.income.deleteMany({ where: { userId } });
+    await tx.expense.deleteMany({ where: { userId } });
+
+    if (validated.assets.length > 0) {
+      await tx.asset.createMany({
+        data: validated.assets.map((a) => ({ ...a, userId })),
+      });
+    }
+    if (validated.liabilities.length > 0) {
+      await tx.liability.createMany({
+        data: validated.liabilities.map((l) => ({ ...l, userId })),
+      });
+    }
+    if (validated.incomes.length > 0) {
+      await tx.income.createMany({
+        data: validated.incomes.map((i) => ({ ...i, userId })),
+      });
+    }
+    if (validated.expenses.length > 0) {
+      await tx.expense.createMany({
+        data: validated.expenses.map((e) => ({ ...e, userId })),
+      });
+    }
+
+    await tx.user.update({
       where: { id: userId },
-      data: { onboardingComplete: true, mode: quick ? "QUICK" : "DETAILED" },
-    }),
-  ]);
+      data: {
+        dateOfBirth: validated.dateOfBirth,
+        onboardingComplete: true,
+        mode: quick ? "QUICK" : "DETAILED",
+      },
+    });
+  });
 
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },

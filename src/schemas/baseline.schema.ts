@@ -88,6 +88,7 @@ export const patchExpenseSchema = expenseInputSchema.partial();
 // ─── Full baseline schema (detailed mode) ────────────────
 
 export const baselineInputSchema = z.object({
+  dateOfBirth: z.coerce.date(),
   assets: z.array(assetInputSchema).default([]),
   liabilities: z.array(liabilityInputSchema).default([]),
   incomes: z.array(incomeInputSchema).default([]),
@@ -97,6 +98,7 @@ export const baselineInputSchema = z.object({
 // ─── Quick-mode schema ───────────────────────────────────
 
 export const quickBaselineInputSchema = z.object({
+  dateOfBirth: z.coerce.date(),
   monthlyTakeHome: z.number().nonnegative().optional(),
   totalSavings: z.number().nonnegative().optional(),
   totalInvestments: z.number().nonnegative().optional(),

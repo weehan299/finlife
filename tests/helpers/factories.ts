@@ -16,6 +16,7 @@ export async function createUser(overrides: UserOverrides = {}) {
     data: {
       clerkUserId: uniqueClerkId(),
       email: `test_${counter}@example.com`,
+      dateOfBirth: new Date("1990-01-15"),
       ...overrides,
     },
   });
@@ -34,6 +35,7 @@ export async function createUserWithSettings(
   return prisma.user.create({
     data: {
       clerkUserId: uniqueClerkId(),
+      dateOfBirth: new Date("1990-01-15"),
       ...userOverrides,
       settings: {
         create: settingsOverrides,
