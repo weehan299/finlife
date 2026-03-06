@@ -14,6 +14,7 @@ type Step = "loading" | "intent" | "setup" | "snapshot";
 export default function OverviewContent() {
   const [step, setStep] = useState<Step>("loading");
   const [snapshot, setSnapshot] = useState<SnapshotWithExtras | null>(null);
+  const [baseline, setBaseline] = useState<BaselineResponse | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -33,6 +34,7 @@ export default function OverviewContent() {
 
         if (hasData) {
           setSnapshot(computeSnapshot(data));
+          setBaseline(data);
           setStep("snapshot");
         } else {
           setStep("intent");
@@ -46,6 +48,7 @@ export default function OverviewContent() {
 
   function handleSetupComplete(data: BaselineResponse) {
     setSnapshot(computeSnapshot(data));
+    setBaseline(data);
     setStep("snapshot");
   }
 
@@ -79,7 +82,9 @@ export default function OverviewContent() {
       <h1 className="mb-6 text-2xl font-bold text-gray-900">
         Your Financial Overview
       </h1>
-      {snapshot && <SnapshotDisplay snapshot={snapshot} />}
+      {snapshot && baseline && (
+        <SnapshotDisplay snapshot={snapshot} baseline={baseline} />
+      )}
       <NextActions />
     </div>
   );

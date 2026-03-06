@@ -1,15 +1,28 @@
+"use client";
+
+import { useState } from "react";
 import MetricCard from "@/components/ui/MetricCard";
+import MetricDetailPanel from "@/components/metrics/MetricDetailPanel";
 import { formatCurrency } from "@/lib/format";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
 import { summarizeSnapshot } from "@/lib/snapshot";
+import type { BaselineResponse } from "@/types/baseline.types";
+
+export type MetricCardId = "surplus" | "netWorth" | "runway" | "debtLoad";
 
 interface SnapshotDisplayProps {
   snapshot: SnapshotWithExtras;
+  baseline: BaselineResponse;
 }
 
-export default function SnapshotDisplay({ snapshot }: SnapshotDisplayProps) {
+export default function SnapshotDisplay({ snapshot, baseline }: SnapshotDisplayProps) {
+  const [selectedCard, setSelectedCard] = useState<MetricCardId | null>(null);
   const summary = summarizeSnapshot(snapshot);
   const isDeficit = snapshot.monthlySurplus < 0;
+
+  function toggle(id: MetricCardId) {
+    setSelectedCard((prev) => (prev === id ? null : id));
+  }
 
   return (
     <div>
@@ -25,17 +38,23 @@ export default function SnapshotDisplay({ snapshot }: SnapshotDisplayProps) {
           value={formatCurrency(Math.abs(snapshot.monthlySurplus))}
           subtitle={isDeficit ? "Deficit" : "Surplus"}
           status={isDeficit ? "negative" : "positive"}
+          onClick={() => toggle("surplus")}
+          selected={selectedCard === "surplus"}
         />
         <MetricCard
           label="Net Worth"
           value={formatCurrency(snapshot.netWorth)}
           status={snapshot.netWorth >= 0 ? "positive" : "negative"}
+          onClick={() => toggle("netWorth")}
+          selected={selectedCard === "netWorth"}
         />
         <MetricCard
           label="Emergency Runway"
           value={`${Math.round(snapshot.emergencyRunwayMonths * 10) / 10} mo`}
           subtitle="Liquid savings ÷ expenses"
           status={snapshot.emergencyRunwayMonths >= 6 ? "positive" : "negative"}
+          onClick={() => toggle("runway")}
+          selected={selectedCard === "runway"}
         />
         <MetricCard
           label="Debt Load"
@@ -46,8 +65,16 @@ export default function SnapshotDisplay({ snapshot }: SnapshotDisplayProps) {
               : undefined
           }
           status={snapshot.totalLiabilities === 0 ? "positive" : "neutral"}
+          onClick={() => toggle("debtLoad")}
+          selected={selectedCard === "debtLoad"}
         />
       </div>
+
+      <MetricDetailPanel
+        selectedCard={selectedCard}
+        snapshot={snapshot}
+        baseline={baseline}
+      />
     </div>
   );
 }
