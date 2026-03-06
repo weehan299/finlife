@@ -126,6 +126,36 @@ Three CTA links:
 - Secondary: "Set a goal" → `/goals`
 - Secondary: "Refine your inputs" → `/settings`
 
+## Editing Financial Items
+
+Users can edit existing baseline items directly from the metric detail views in the overview experience.
+
+### UI Flow
+
+1. In a metric detail panel, expand a category in `CategoryBreakdown`.
+2. Click the pencil icon next to an item row.
+3. `onEditItem(entityType, id)` is forwarded to `OverviewContent`.
+4. `OverviewContent` opens `Drawer` in `mode: "edit"` and stores the `entityType` + `itemId`.
+5. `DrawerForm` resolves `initialData` from the current `baseline` arrays and renders the matching form.
+6. After a successful update or delete, the drawer closes and `refreshBaseline()` refetches `GET /api/baseline` so cards and breakdowns update immediately.
+
+### Entity Mapping
+
+| Entity | Edit Form | Update Endpoint | Delete Endpoint |
+|------|------|------|------|
+| `asset` | `AssetForm` | `PATCH /api/baseline/assets/:id` | `DELETE /api/baseline/assets/:id` |
+| `liability` | `LiabilityForm` | `PATCH /api/baseline/liabilities/:id` | `DELETE /api/baseline/liabilities/:id` |
+| `income` | `IncomeForm` | `PATCH /api/baseline/income/:id` | `DELETE /api/baseline/income/:id` |
+| `expense` | `ExpenseForm` | `PATCH /api/baseline/expenses/:id` | `DELETE /api/baseline/expenses/:id` |
+
+### Validation and Error Handling
+
+- Each form runs client-side zod validation before submitting.
+- Forms submit as `PATCH` in edit mode and show inline errors for validation/API failures.
+- Delete actions are available only in edit mode and call the entity-specific `DELETE` endpoint.
+- Backend routes verify authentication and item ownership; non-owned or missing records return `404 Not Found`.
+- Network failures show a generic retry message and preserve the current form state.
+
 ## Test Coverage
 
 `tests/unit/snapshot-compute.test.ts` — 8 tests:
