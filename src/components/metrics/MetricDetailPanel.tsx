@@ -13,26 +13,32 @@ interface MetricDetailPanelProps {
   selectedCard: MetricCardId | null;
   snapshot: SnapshotWithExtras;
   baseline: BaselineResponse;
+  onAddItem?: (entityType: string, category?: string) => void;
+  onEditItem?: (entityType: string, id: string) => void;
 }
 
 function DetailContent({
   selectedCard,
   snapshot,
   baseline,
+  onAddItem,
+  onEditItem,
 }: {
   selectedCard: MetricCardId;
   snapshot: SnapshotWithExtras;
   baseline: BaselineResponse;
+  onAddItem?: (entityType: string, category?: string) => void;
+  onEditItem?: (entityType: string, id: string) => void;
 }) {
   switch (selectedCard) {
     case "surplus":
-      return <SurplusDetail snapshot={snapshot} baseline={baseline} />;
+      return <SurplusDetail snapshot={snapshot} baseline={baseline} onAddItem={onAddItem} onEditItem={onEditItem} />;
     case "netWorth":
-      return <NetWorthDetail snapshot={snapshot} baseline={baseline} />;
+      return <NetWorthDetail snapshot={snapshot} baseline={baseline} onAddItem={onAddItem} onEditItem={onEditItem} />;
     case "runway":
-      return <RunwayDetail snapshot={snapshot} baseline={baseline} />;
+      return <RunwayDetail snapshot={snapshot} baseline={baseline} onAddItem={onAddItem} onEditItem={onEditItem} />;
     case "debtLoad":
-      return <DebtLoadDetail snapshot={snapshot} baseline={baseline} />;
+      return <DebtLoadDetail snapshot={snapshot} baseline={baseline} onAddItem={onAddItem} onEditItem={onEditItem} />;
   }
 }
 
@@ -40,6 +46,8 @@ export default function MetricDetailPanel({
   selectedCard,
   snapshot,
   baseline,
+  onAddItem,
+  onEditItem,
 }: MetricDetailPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const isOpen = selectedCard !== null;
@@ -63,6 +71,8 @@ export default function MetricDetailPanel({
               selectedCard={selectedCard}
               snapshot={snapshot}
               baseline={baseline}
+              onAddItem={onAddItem}
+              onEditItem={onEditItem}
             />
           )}
         </div>

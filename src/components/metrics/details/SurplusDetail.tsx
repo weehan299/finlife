@@ -1,6 +1,6 @@
 import Link from "next/link";
 import BreakdownBar from "@/components/ui/BreakdownBar";
-import BreakdownTable from "@/components/ui/BreakdownTable";
+import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
 import { formatCurrency } from "@/lib/format";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
 import type { BaselineResponse } from "@/types/baseline.types";
@@ -8,18 +8,22 @@ import type { BaselineResponse } from "@/types/baseline.types";
 interface SurplusDetailProps {
   snapshot: SnapshotWithExtras;
   baseline: BaselineResponse;
+  onAddItem?: (entityType: string, category?: string) => void;
+  onEditItem?: (entityType: string, id: string) => void;
 }
 
-export default function SurplusDetail({ snapshot, baseline }: SurplusDetailProps) {
+export default function SurplusDetail({ snapshot, baseline, onAddItem, onEditItem }: SurplusDetailProps) {
   const isDeficit = snapshot.monthlySurplus < 0;
 
   const incomeItems = baseline.incomes.map((i) => ({
+    id: i.id,
     label: i.label,
     category: i.category,
     amount: i.monthlyAmount,
   }));
 
   const expenseItems = baseline.expenses.map((e) => ({
+    id: e.id,
     label: e.label,
     category: e.category,
     amount: e.monthlyAmount,
@@ -48,16 +52,54 @@ export default function SurplusDetail({ snapshot, baseline }: SurplusDetailProps
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <BreakdownTable
-          title="Income"
-          items={incomeItems}
-          total={snapshot.monthlyIncome}
-        />
-        <BreakdownTable
-          title="Expense"
-          items={expenseItems}
-          total={snapshot.monthlyExpenses}
-        />
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-gray-900">Income</h4>
+            {onAddItem && (
+              <button
+                type="button"
+                onClick={() => onAddItem("income")}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add income
+              </button>
+            )}
+          </div>
+          <CategoryBreakdown
+            items={incomeItems}
+            total={snapshot.monthlyIncome}
+            onEditItem={onEditItem ? (id) => onEditItem("income", id) : undefined}
+            onAddItem={onAddItem ? (cat) => onAddItem("income", cat) : undefined}
+            entityLabel="income"
+          />
+        </div>
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-gray-900">Expenses</h4>
+            {onAddItem && (
+              <button
+                type="button"
+                onClick={() => onAddItem("expense")}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add expense
+              </button>
+            )}
+          </div>
+          <CategoryBreakdown
+            items={expenseItems}
+            total={snapshot.monthlyExpenses}
+            onEditItem={onEditItem ? (id) => onEditItem("expense", id) : undefined}
+            onAddItem={onAddItem ? (cat) => onAddItem("expense", cat) : undefined}
+            entityLabel="expense"
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-4 border-t border-gray-200 pt-4">
@@ -65,7 +107,7 @@ export default function SurplusDetail({ snapshot, baseline }: SurplusDetailProps
           href="/settings"
           className="text-sm font-medium text-blue-600 hover:text-blue-800"
         >
-          Edit income &amp; expenses
+          Manage all &rarr;
         </Link>
         <span className="text-gray-300">|</span>
         {isDeficit ? (

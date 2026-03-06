@@ -1,5 +1,5 @@
 import Link from "next/link";
-import BreakdownTable from "@/components/ui/BreakdownTable";
+import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
 import { formatCurrency } from "@/lib/format";
 import { DEFAULT_ASSUMPTIONS } from "@/lib/defaults";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
@@ -8,15 +8,18 @@ import type { BaselineResponse } from "@/types/baseline.types";
 interface DebtLoadDetailProps {
   snapshot: SnapshotWithExtras;
   baseline: BaselineResponse;
+  onAddItem?: (entityType: string, category?: string) => void;
+  onEditItem?: (entityType: string, id: string) => void;
 }
 
-export default function DebtLoadDetail({ snapshot, baseline }: DebtLoadDetailProps) {
+export default function DebtLoadDetail({ snapshot, baseline, onAddItem, onEditItem }: DebtLoadDetailProps) {
   const dtiThreshold = DEFAULT_ASSUMPTIONS.maxDebtToIncome;
   const dtiPct = Math.round(snapshot.debtToIncomeRatio * 100);
   const isHighDTI = snapshot.debtToIncomeRatio > dtiThreshold;
   const isDebtFree = snapshot.totalLiabilities === 0;
 
   const liabilityItems = baseline.liabilities.map((l) => ({
+    id: l.id,
     label: l.label,
     category: l.category,
     amount: l.balance,
@@ -55,11 +58,30 @@ export default function DebtLoadDetail({ snapshot, baseline }: DebtLoadDetailPro
             </div>
           </div>
 
-          <BreakdownTable
-            title="Liability"
-            items={liabilityItems}
-            total={snapshot.totalLiabilities}
-          />
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-gray-900">Liabilities</h4>
+              {onAddItem && (
+                <button
+                  type="button"
+                  onClick={() => onAddItem("liability")}
+                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Add liability
+                </button>
+              )}
+            </div>
+            <CategoryBreakdown
+              items={liabilityItems}
+              total={snapshot.totalLiabilities}
+              onEditItem={onEditItem ? (id) => onEditItem("liability", id) : undefined}
+              onAddItem={onAddItem ? (cat) => onAddItem("liability", cat) : undefined}
+              entityLabel="liability"
+            />
+          </div>
         </>
       )}
 
@@ -68,7 +90,7 @@ export default function DebtLoadDetail({ snapshot, baseline }: DebtLoadDetailPro
           href="/settings"
           className="text-sm font-medium text-blue-600 hover:text-blue-800"
         >
-          Edit liabilities
+          Manage all &rarr;
         </Link>
         <span className="text-gray-300">|</span>
         {isDebtFree ? (

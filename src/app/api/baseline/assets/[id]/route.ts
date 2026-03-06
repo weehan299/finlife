@@ -22,3 +22,18 @@ export const PATCH = withApi(
     return ok(serializeAsset(updated));
   },
 );
+
+export const DELETE = withApi(
+  async (_req: Request, { params }: { params: Promise<{ id: string }> }) => {
+    const userId = await requireAuth();
+    const { id } = await params;
+
+    const existing = await prisma.asset.findUnique({ where: { id } });
+    if (!existing || existing.userId !== userId) {
+      throw ApiError.notFound();
+    }
+
+    await prisma.asset.delete({ where: { id } });
+    return ok({ deleted: true });
+  },
+);

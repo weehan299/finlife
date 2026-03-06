@@ -1,5 +1,5 @@
 import Link from "next/link";
-import BreakdownTable from "@/components/ui/BreakdownTable";
+import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
 import { formatCurrency } from "@/lib/format";
 import { DEFAULT_ASSUMPTIONS } from "@/lib/defaults";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
@@ -8,15 +8,18 @@ import type { BaselineResponse } from "@/types/baseline.types";
 interface RunwayDetailProps {
   snapshot: SnapshotWithExtras;
   baseline: BaselineResponse;
+  onAddItem?: (entityType: string, category?: string) => void;
+  onEditItem?: (entityType: string, id: string) => void;
 }
 
-export default function RunwayDetail({ snapshot, baseline }: RunwayDetailProps) {
+export default function RunwayDetail({ snapshot, baseline, onAddItem, onEditItem }: RunwayDetailProps) {
   const target = DEFAULT_ASSUMPTIONS.minEmergencyMonths;
   const meetsTarget = snapshot.emergencyRunwayMonths >= target;
   const runway = Math.round(snapshot.emergencyRunwayMonths * 10) / 10;
 
   const liquidAssets = baseline.assets.filter((a) => a.isLiquid);
   const liquidItems = liquidAssets.map((a) => ({
+    id: a.id,
     label: a.label,
     category: a.category,
     amount: a.value,
@@ -46,11 +49,30 @@ export default function RunwayDetail({ snapshot, baseline }: RunwayDetailProps) 
       </div>
 
       {liquidItems.length > 0 && (
-        <BreakdownTable
-          title="Liquid Asset"
-          items={liquidItems}
-          total={snapshot.liquidAssets}
-        />
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-gray-900">Liquid Assets</h4>
+            {onAddItem && (
+              <button
+                type="button"
+                onClick={() => onAddItem("asset")}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add asset
+              </button>
+            )}
+          </div>
+          <CategoryBreakdown
+            items={liquidItems}
+            total={snapshot.liquidAssets}
+            onEditItem={onEditItem ? (id) => onEditItem("asset", id) : undefined}
+            onAddItem={onAddItem ? (cat) => onAddItem("asset", cat) : undefined}
+            entityLabel="asset"
+          />
+        </div>
       )}
 
       <div className="flex flex-wrap items-center gap-4 border-t border-gray-200 pt-4">
@@ -58,7 +80,7 @@ export default function RunwayDetail({ snapshot, baseline }: RunwayDetailProps) 
           href="/settings"
           className="text-sm font-medium text-blue-600 hover:text-blue-800"
         >
-          Edit assets &amp; expenses
+          Manage all &rarr;
         </Link>
         <span className="text-gray-300">|</span>
         {meetsTarget ? (

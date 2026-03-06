@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { BaselineResponse } from "@/types/baseline.types";
 import { computeSnapshot } from "@/lib/snapshot";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
@@ -8,13 +8,44 @@ import IntentSelector from "@/components/IntentSelector";
 import QuickSetupForm from "@/components/forms/QuickSetupForm";
 import SnapshotDisplay from "@/components/metrics/SnapshotDisplay";
 import NextActions from "@/components/NextActions";
+import Drawer from "@/components/ui/Drawer";
+import AssetForm from "@/components/forms/AssetForm";
+import LiabilityForm from "@/components/forms/LiabilityForm";
+import IncomeForm from "@/components/forms/IncomeForm";
+import ExpenseForm from "@/components/forms/ExpenseForm";
 
 type Step = "loading" | "intent" | "setup" | "snapshot";
+
+type EntityType = "asset" | "liability" | "income" | "expense";
+
+type DrawerState =
+  | { open: false }
+  | { open: true; mode: "add"; entityType: EntityType; defaultCategory?: string }
+  | { open: true; mode: "edit"; entityType: EntityType; itemId: string };
+
+const drawerTitles: Record<string, Record<string, string>> = {
+  add: { asset: "Add asset", liability: "Add liability", income: "Add income", expense: "Add expense" },
+  edit: { asset: "Edit asset", liability: "Edit liability", income: "Edit income", expense: "Edit expense" },
+};
 
 export default function OverviewContent() {
   const [step, setStep] = useState<Step>("loading");
   const [snapshot, setSnapshot] = useState<SnapshotWithExtras | null>(null);
   const [baseline, setBaseline] = useState<BaselineResponse | null>(null);
+  const [drawer, setDrawer] = useState<DrawerState>({ open: false });
+
+  const refreshBaseline = useCallback(async () => {
+    try {
+      const res = await fetch("/api/baseline");
+      const json = await res.json();
+      if (!json.ok) return;
+      const data = json.data as BaselineResponse;
+      setSnapshot(computeSnapshot(data));
+      setBaseline(data);
+    } catch {
+      // keep current state on error
+    }
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -52,6 +83,33 @@ export default function OverviewContent() {
     setStep("snapshot");
   }
 
+  function handleAddItem(entityType: string, category?: string) {
+    setDrawer({
+      open: true,
+      mode: "add",
+      entityType: entityType as EntityType,
+      defaultCategory: category,
+    });
+  }
+
+  function handleEditItem(entityType: string, id: string) {
+    setDrawer({
+      open: true,
+      mode: "edit",
+      entityType: entityType as EntityType,
+      itemId: id,
+    });
+  }
+
+  function handleDrawerSuccess() {
+    setDrawer({ open: false });
+    refreshBaseline();
+  }
+
+  function closeDrawer() {
+    setDrawer({ open: false });
+  }
+
   if (step === "loading") {
     return (
       <div className="space-y-4 py-12">
@@ -77,15 +135,98 @@ export default function OverviewContent() {
     return <QuickSetupForm onComplete={handleSetupComplete} />;
   }
 
+  const drawerTitle = drawer.open ? drawerTitles[drawer.mode][drawer.entityType] : "";
+
   return (
     <div className="py-6">
       <h1 className="mb-6 text-2xl font-bold text-gray-900">
         Your Financial Overview
       </h1>
       {snapshot && baseline && (
-        <SnapshotDisplay snapshot={snapshot} baseline={baseline} />
+        <SnapshotDisplay
+          snapshot={snapshot}
+          baseline={baseline}
+          onAddItem={handleAddItem}
+          onEditItem={handleEditItem}
+        />
       )}
       <NextActions />
+
+      <Drawer open={drawer.open} onClose={closeDrawer} title={drawerTitle}>
+        {drawer.open && (
+          <DrawerForm
+            drawer={drawer}
+            baseline={baseline}
+            onSuccess={handleDrawerSuccess}
+          />
+        )}
+      </Drawer>
     </div>
+  );
+}
+
+function DrawerForm({
+  drawer,
+  baseline,
+  onSuccess,
+}: {
+  drawer: DrawerState & { open: true };
+  baseline: BaselineResponse | null;
+  onSuccess: () => void;
+}) {
+  const { entityType, mode } = drawer;
+
+  if (entityType === "asset") {
+    const initialData =
+      mode === "edit" && baseline
+        ? baseline.assets.find((a) => a.id === drawer.itemId)
+        : undefined;
+    return (
+      <AssetForm
+        initialData={initialData}
+        defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
+        onSuccess={onSuccess}
+      />
+    );
+  }
+
+  if (entityType === "liability") {
+    const initialData =
+      mode === "edit" && baseline
+        ? baseline.liabilities.find((l) => l.id === drawer.itemId)
+        : undefined;
+    return (
+      <LiabilityForm
+        initialData={initialData}
+        defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
+        onSuccess={onSuccess}
+      />
+    );
+  }
+
+  if (entityType === "income") {
+    const initialData =
+      mode === "edit" && baseline
+        ? baseline.incomes.find((i) => i.id === drawer.itemId)
+        : undefined;
+    return (
+      <IncomeForm
+        initialData={initialData}
+        defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
+        onSuccess={onSuccess}
+      />
+    );
+  }
+
+  const initialData =
+    mode === "edit" && baseline
+      ? baseline.expenses.find((e) => e.id === drawer.itemId)
+      : undefined;
+  return (
+    <ExpenseForm
+      initialData={initialData}
+      defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
+      onSuccess={onSuccess}
+    />
   );
 }
