@@ -4,6 +4,7 @@ export const DEFAULT_ASSUMPTIONS = {
   savingsInterestRate: 0.015,
   debtInterestFallback: 0.08,
   safeWithdrawalRate: 0.04,
+  retirementAge: 65,
   minEmergencyMonths: 6,
   minPostDecisionCash: 0,
   minMonthlySurplus: 0,

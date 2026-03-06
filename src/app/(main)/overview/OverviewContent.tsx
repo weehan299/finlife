@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { BaselineResponse } from "@/types/baseline.types";
+import type { ProjectionResponse } from "@/types/snapshot.types";
 import { computeSnapshot } from "@/lib/snapshot";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
 import IntentSelector from "@/components/IntentSelector";
 import QuickSetupForm from "@/components/forms/QuickSetupForm";
 import SnapshotDisplay from "@/components/metrics/SnapshotDisplay";
+import ProjectionDisplay from "@/components/metrics/ProjectionDisplay";
 import NextActions from "@/components/NextActions";
 import Drawer from "@/components/ui/Drawer";
 import AssetForm from "@/components/forms/AssetForm";
@@ -32,16 +34,25 @@ export default function OverviewContent() {
   const [step, setStep] = useState<Step>("loading");
   const [snapshot, setSnapshot] = useState<SnapshotWithExtras | null>(null);
   const [baseline, setBaseline] = useState<BaselineResponse | null>(null);
+  const [projections, setProjections] = useState<ProjectionResponse | null>(null);
   const [drawer, setDrawer] = useState<DrawerState>({ open: false });
 
   const refreshBaseline = useCallback(async () => {
     try {
-      const res = await fetch("/api/baseline");
-      const json = await res.json();
-      if (!json.ok) return;
-      const data = json.data as BaselineResponse;
-      setSnapshot(computeSnapshot(data));
-      setBaseline(data);
+      const [baselineRes, projRes] = await Promise.all([
+        fetch("/api/baseline"),
+        fetch("/api/projections"),
+      ]);
+      const baselineJson = await baselineRes.json();
+      if (baselineJson.ok) {
+        const data = baselineJson.data as BaselineResponse;
+        setSnapshot(computeSnapshot(data));
+        setBaseline(data);
+      }
+      const projJson = await projRes.json();
+      if (projJson.ok) {
+        setProjections(projJson.data as ProjectionResponse);
+      }
     } catch {
       // keep current state on error
     }
@@ -50,8 +61,11 @@ export default function OverviewContent() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/baseline");
-        const json = await res.json();
+        const [baselineRes, projRes] = await Promise.all([
+          fetch("/api/baseline"),
+          fetch("/api/projections"),
+        ]);
+        const json = await baselineRes.json();
         if (!json.ok) {
           setStep("intent");
           return;
@@ -66,6 +80,10 @@ export default function OverviewContent() {
         if (hasData) {
           setSnapshot(computeSnapshot(data));
           setBaseline(data);
+          const projJson = await projRes.json();
+          if (projJson.ok) {
+            setProjections(projJson.data as ProjectionResponse);
+          }
           setStep("snapshot");
         } else {
           setStep("intent");
@@ -150,6 +168,7 @@ export default function OverviewContent() {
           onEditItem={handleEditItem}
         />
       )}
+      {projections && <ProjectionDisplay projections={projections} />}
       <NextActions />
 
       <Drawer open={drawer.open} onClose={closeDrawer} title={drawerTitle}>

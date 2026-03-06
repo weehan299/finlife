@@ -124,6 +124,7 @@ model UserSettings {
   savingsInterestRate  Decimal @default(0.015) @db.Decimal(5, 4)
   debtInterestFallback Decimal @default(0.08)  @db.Decimal(5, 4)
   safeWithdrawalRate   Decimal @default(0.04)  @db.Decimal(5, 4)
+  retirementAge        Int     @default(65)
 
   minEmergencyMonths  Int     @default(6)
   minPostDecisionCash Decimal @default(0)    @db.Decimal(14, 2)

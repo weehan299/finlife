@@ -37,6 +37,7 @@ async function main() {
           housingInsuranceMonthlyDefault: "150.00",
           housingMaintenanceRateDefault: "1.0000",
           stressExpenseReductionDefault: "0.1500",
+          retirementAge: 60,
         },
       },
     },

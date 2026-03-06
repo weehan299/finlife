@@ -24,6 +24,7 @@ Returning users with existing data skip directly to step 3.
 | `src/components/IntentSelector.tsx` | Component | Step 1 — three intent cards |
 | `src/components/forms/QuickSetupForm.tsx` | Component | Step 2 — five-field form, submits `PUT /api/baseline` |
 | `src/components/metrics/SnapshotDisplay.tsx` | Component | Step 3 — summary banner + metric grid |
+| `src/components/metrics/ProjectionDisplay.tsx` | Component | Net worth projection chart + milestone strip |
 | `src/components/NextActions.tsx` | Component | Step 4 — CTA links |
 | `src/app/(main)/overview/OverviewContent.tsx` | Orchestrator | Client-side state machine driving the flow |
 | `src/app/(main)/overview/page.tsx` | Page | Server component rendering `OverviewContent` |
@@ -118,6 +119,16 @@ Validation: non-negative numbers, at least one field > 0. Uses string state for 
 
 - Top banner colored by surplus (green) or deficit (red) with `summarizeSnapshot()` text
 - Grid of four `MetricCard`s: Monthly Surplus/Deficit, Net Worth, Emergency Runway, Debt Load
+
+### ProjectionDisplay
+
+SVG-based net worth projection chart with milestone strip below. Renders data from `GET /api/projections`.
+
+Layout:
+- **Desktop (lg+):** constrained to `max-w-[50%]` so it aligns with 2 of the 4 KPI columns above
+- **Mobile/tablet:** full-width
+- **Chart:** 600×160 viewBox with gradient fill area, line, and labeled data points
+- **Milestone strip:** "Today" marker + future milestones with net worth values (`text-sm`, `min-w-[80px]`) and change indicators (green/red)
 
 ### NextActions
 
