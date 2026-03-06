@@ -89,7 +89,11 @@ export type EvaluateRequestInput = z.infer<typeof evaluateRequestSchema>;
 export const createDecisionSchema = z
   .object({
     template: decisionTemplateSchema,
-    name: z.string().min(1).max(120),
+    name: z
+      .string()
+      .max(120)
+      .transform((value) => value.trim())
+      .optional(),
     inputs: z.record(z.string(), z.unknown()),
   })
   .transform((data) => ({

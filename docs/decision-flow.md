@@ -8,10 +8,11 @@ This document describes the Decision Check feature — the core "Can I afford th
 |---|---|
 | Types | `src/types/decision.types.ts` |
 | Schemas | `src/schemas/decision.schema.ts` |
+| Naming | `src/lib/decision-name.ts` |
 | Services | `src/services/decision.service.ts`, `src/services/snapshot.service.ts` |
 | API | `src/app/api/decisions/route.ts`, `src/app/api/decisions/evaluate/route.ts`, `src/app/api/decisions/[id]/route.ts` |
 | UI | `src/app/(main)/decisions/new/DecisionWorkspace.tsx`, `src/components/decisions/*.tsx` |
-| Tests | `tests/integration/decision-evaluate.test.ts` |
+| Tests | `tests/integration/decision-evaluate.test.ts`, `tests/unit/decision-name.test.ts`, `tests/unit/decision-schema.test.ts` |
 
 ## Flow Overview
 
@@ -20,7 +21,11 @@ User picks template → fills inputs → POST /api/decisions/evaluate → instan
                                                                    ↓
                                            User tweaks inputs → re-evaluates (no DB write)
                                                                    ↓
-                                           User clicks "Save" → POST /api/decisions (persists)
+                   Optional decision name prefilled from template + key inputs (editable)
+                                                                   ↓
+                     User clicks "Save decision" → POST /api/decisions (persists immediately)
+                                                                   ↓
+                                          Toast feedback: "Decision saved"
 ```
 
 The evaluate endpoint is stateless — it reads the user's current financial baseline from the DB, runs all computations, and returns the result without writing anything. This enables instant iteration: the user can change inputs and re-evaluate repeatedly before deciding to save.
@@ -144,7 +149,9 @@ Stateless evaluation. No DB write.
 
 Save an evaluated decision. Re-evaluates server-side for fresh results.
 
-**Request:** Same as evaluate + `name` field.
+**Request:** Same as evaluate + optional `name` field.
+
+If `name` is omitted or blank, the server generates one via `buildDecisionName(template, inputs)` so persistence never depends on a client prompt.
 
 **Response:** Created decision with id, verdict, and full result.
 
@@ -168,6 +175,16 @@ Full decision detail including all JSON snapshot columns.
 
 After first evaluation, the form stays visible alongside results in a side-by-side layout (2/5 + 3/5 grid on large screens). The user changes inputs and clicks "Re-evaluate" — no auto-debounce, manual trigger only.
 
+The workspace also includes an optional **Decision name** input near the page title:
+- Auto-prefilled after evaluation using `buildDecisionName(template, inputs)`
+- Editable by the user before save
+- User edits are preserved on re-evaluation unless the field is cleared
+
+Save flow is non-blocking:
+- No `window.prompt`
+- Clicking **Save decision** sends the request immediately
+- Success shows an in-page toast (`Decision saved`)
+
 ### Components
 
 | Component | Purpose |
@@ -188,7 +205,7 @@ After first evaluation, the form stays visible alongside results in a side-by-si
 The `Decision` Prisma model stores:
 
 - `template` — which of the 6 templates
-- `name` — user-given name
+- `name` — user-provided or auto-generated fallback name
 - `inputs` (JSON) — template-specific inputs
 - `upfrontAmount`, `monthlyImpact` — computed financial impact
 - `status` — DRAFT / EVALUATED / ARCHIVED

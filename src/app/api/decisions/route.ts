@@ -2,6 +2,7 @@ import { withApi } from "@/lib/api/handler";
 import { ok } from "@/lib/api/response";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { buildDecisionName } from "@/lib/decision-name";
 import { createDecisionSchema } from "@/schemas/decision.schema";
 import { evaluateDecision } from "@/services/decision.service";
 import type { DecisionSummary } from "@/types/decision.types";
@@ -40,6 +41,7 @@ export const POST = withApi(async (req: Request) => {
   const userId = await requireAuth();
   const body = await req.json();
   const { template, name, inputs } = createDecisionSchema.parse(body);
+  const finalName = name && name.length > 0 ? name : buildDecisionName(template, inputs);
 
   const result = await evaluateDecision({ template, inputs, userId });
 
@@ -47,7 +49,7 @@ export const POST = withApi(async (req: Request) => {
     data: {
       userId,
       template,
-      name,
+      name: finalName,
       inputs: JSON.parse(JSON.stringify(inputs)),
       upfrontAmount: result.computedUpfrontAmount,
       monthlyImpact: result.computedMonthlyImpact,
