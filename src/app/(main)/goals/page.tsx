@@ -1,3 +1,5 @@
+import GoalsContent from "./GoalsContent";
+
 export default function GoalsPage() {
-  return <h1 className="text-2xl font-semibold">Goals (placeholder)</h1>;
+  return <GoalsContent />;
 }
