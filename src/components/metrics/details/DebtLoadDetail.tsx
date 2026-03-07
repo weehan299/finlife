@@ -78,7 +78,6 @@ export default function DebtLoadDetail({ snapshot, baseline, onAddItem, onEditIt
               items={liabilityItems}
               total={snapshot.totalLiabilities}
               onEditItem={onEditItem ? (id) => onEditItem("liability", id) : undefined}
-              entityLabel="liability"
             />
           </div>
         </>

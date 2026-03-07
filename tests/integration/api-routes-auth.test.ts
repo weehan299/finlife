@@ -31,8 +31,7 @@ const routes: RouteEntry[] = [
   { path: "/api/goals", method: "POST", module: "@/app/api/goals/route" },
   { path: "/api/decisions", method: "GET", module: "@/app/api/decisions/route" },
   { path: "/api/decisions", method: "POST", module: "@/app/api/decisions/route" },
-  { path: "/api/snapshot", method: "GET", module: "@/app/api/snapshot/route" },
-  { path: "/api/baseline", method: "GET", module: "@/app/api/baseline/route" },
+{ path: "/api/baseline", method: "GET", module: "@/app/api/baseline/route" },
   { path: "/api/baseline", method: "PUT", module: "@/app/api/baseline/route" },
   {
     path: "/api/baseline/assets/fake-id",

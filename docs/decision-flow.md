@@ -246,7 +246,7 @@ DecisionResults (orchestrator)
 |---|---|
 | `VerdictBanner` | Replaced by `NarrativeVerdict`; kept for legacy saved decisions without narrative data |
 | `StressTestSection` | Split into `ResilienceSection` + `DiagnosisSection`; kept for legacy fallback |
-| `DecisionProjectionChart` | Removed from main flow; narrative sections replace the projection chart |
+| `DecisionProjectionChart` | Deleted; narrative sections replace the projection chart |
 
 ### Decisions List Page
 

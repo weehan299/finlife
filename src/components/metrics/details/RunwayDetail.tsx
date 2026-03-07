@@ -69,7 +69,6 @@ export default function RunwayDetail({ snapshot, baseline, onAddItem, onEditItem
             items={liquidItems}
             total={snapshot.liquidAssets}
             onEditItem={onEditItem ? (id) => onEditItem("asset", id) : undefined}
-            entityLabel="asset"
           />
         </div>
       )}

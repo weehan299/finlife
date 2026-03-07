@@ -72,7 +72,6 @@ export default function SurplusDetail({ snapshot, baseline, onAddItem, onEditIte
             items={incomeItems}
             total={snapshot.monthlyIncome}
             onEditItem={onEditItem ? (id) => onEditItem("income", id) : undefined}
-            entityLabel="income"
           />
         </div>
         <div>
@@ -95,7 +94,6 @@ export default function SurplusDetail({ snapshot, baseline, onAddItem, onEditIte
             items={expenseItems}
             total={snapshot.monthlyExpenses}
             onEditItem={onEditItem ? (id) => onEditItem("expense", id) : undefined}
-            entityLabel="expense"
           />
         </div>
       </div>

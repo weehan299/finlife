@@ -73,7 +73,6 @@ export default function NetWorthDetail({ snapshot, baseline, onAddItem, onEditIt
               items={assetItems}
               total={snapshot.totalAssets}
               onEditItem={onEditItem ? (id) => onEditItem("asset", id) : undefined}
-              entityLabel="asset"
             />
           ) : (
             <p className="text-sm text-gray-500">No assets added yet.</p>
@@ -100,7 +99,6 @@ export default function NetWorthDetail({ snapshot, baseline, onAddItem, onEditIt
               items={liabilityItems}
               total={snapshot.totalLiabilities}
               onEditItem={onEditItem ? (id) => onEditItem("liability", id) : undefined}
-              entityLabel="liability"
             />
           ) : (
             <p className="text-sm text-gray-500">No liabilities added yet.</p>

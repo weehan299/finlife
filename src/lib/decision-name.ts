@@ -1,4 +1,5 @@
 import type { DecisionTemplate } from "@/types/decision.types";
+import { formatCurrency } from "@/lib/format";
 
 type DecisionInputs = Record<string, unknown> | null | undefined;
 
@@ -21,10 +22,6 @@ function asNonEmptyString(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const text = value.trim();
   return text ? text : null;
-}
-
-function formatCurrency(amount: number): string {
-  return `$${Math.round(amount).toLocaleString()}`;
 }
 
 function formatDateSuffix(date: Date): string {

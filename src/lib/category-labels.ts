@@ -1,4 +1,4 @@
-export const assetCategoryLabels: Record<string, string> = {
+const assetCategoryLabels: Record<string, string> = {
   CASH_SAVINGS: "Cash & Savings",
   INVESTMENTS: "Investments",
   RETIREMENT: "Retirement",
@@ -6,7 +6,7 @@ export const assetCategoryLabels: Record<string, string> = {
   OTHER: "Other",
 };
 
-export const liabilityCategoryLabels: Record<string, string> = {
+const liabilityCategoryLabels: Record<string, string> = {
   CREDIT_CARD: "Credit Card",
   STUDENT_LOAN: "Student Loan",
   LOAN: "Loan",
@@ -14,14 +14,14 @@ export const liabilityCategoryLabels: Record<string, string> = {
   OTHER_DEBT: "Other Debt",
 };
 
-export const incomeCategoryLabels: Record<string, string> = {
+const incomeCategoryLabels: Record<string, string> = {
   SALARY: "Salary",
   SIDE_INCOME: "Side Income",
   BENEFITS: "Benefits",
   OTHER_INCOME: "Other Income",
 };
 
-export const expenseCategoryLabels: Record<string, string> = {
+const expenseCategoryLabels: Record<string, string> = {
   ESSENTIAL: "Essential",
   FLEXIBLE: "Flexible",
 };

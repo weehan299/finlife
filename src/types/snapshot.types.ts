@@ -1,14 +1,3 @@
-export interface ProjectionPoint {
-  month: number;
-  assets: number;
-  liabilities: number;
-  netWorth: number;
-}
-
-export interface ProjectionResult {
-  points: ProjectionPoint[];
-}
-
 export interface ProjectionMilestone {
   label: string;
   months: number;

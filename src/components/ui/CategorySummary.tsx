@@ -16,14 +16,12 @@ interface CategoryGroup {
 interface CategorySummaryProps {
   items: CategoryItem[];
   total: number;
-  entityLabel: string;
   onEditItem?: (id: string) => void;
 }
 
 export default function CategorySummary({
   items,
   total,
-  entityLabel,
   onEditItem,
 }: CategorySummaryProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
