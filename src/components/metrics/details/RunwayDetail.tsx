@@ -1,5 +1,5 @@
 import Link from "next/link";
-import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
+import CategorySummary from "@/components/ui/CategorySummary";
 import { formatCurrency } from "@/lib/format";
 import { DEFAULT_ASSUMPTIONS } from "@/lib/defaults";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
@@ -65,11 +65,10 @@ export default function RunwayDetail({ snapshot, baseline, onAddItem, onEditItem
               </button>
             )}
           </div>
-          <CategoryBreakdown
+          <CategorySummary
             items={liquidItems}
             total={snapshot.liquidAssets}
             onEditItem={onEditItem ? (id) => onEditItem("asset", id) : undefined}
-            onAddItem={onAddItem ? (cat) => onAddItem("asset", cat) : undefined}
             entityLabel="asset"
           />
         </div>

@@ -6,8 +6,8 @@ import type { BaselineResponse } from "@/types/baseline.types";
 import type { DrawerState, EntityType } from "@/types/drawer.types";
 import { formatCurrency } from "@/lib/format";
 import InputCategoryCard from "@/components/ui/InputCategoryCard";
-import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
 import type { CategoryItem } from "@/components/ui/CategoryBreakdown";
+import ItemList from "@/components/ui/ItemList";
 import Drawer from "@/components/ui/Drawer";
 import DrawerForm, { drawerTitles } from "@/components/forms/DrawerForm";
 
@@ -176,23 +176,13 @@ export default function FinancialInputsContent() {
           expanded={expandedSection === "income"}
           onToggle={() => toggleSection("income")}
         >
-          <CategoryBreakdown
+          <ItemList
             items={incomeItems}
             total={incomeTotal}
             entityLabel="income"
             onEditItem={(id) => openEdit("income", id)}
-            onAddItem={(cat) => openAdd("income", cat)}
+            onAddItem={() => openAdd("income")}
           />
-          <button
-            type="button"
-            onClick={() => openAdd("income")}
-            className="mt-3 flex items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add income
-          </button>
         </InputCategoryCard>
 
         <InputCategoryCard
@@ -206,23 +196,13 @@ export default function FinancialInputsContent() {
           expanded={expandedSection === "spending"}
           onToggle={() => toggleSection("spending")}
         >
-          <CategoryBreakdown
+          <ItemList
             items={expenseItems}
             total={expenseTotal}
             entityLabel="expense"
             onEditItem={(id) => openEdit("expense", id)}
-            onAddItem={(cat) => openAdd("expense", cat)}
+            onAddItem={() => openAdd("expense")}
           />
-          <button
-            type="button"
-            onClick={() => openAdd("expense")}
-            className="mt-3 flex items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add expense
-          </button>
         </InputCategoryCard>
 
         <InputCategoryCard
@@ -236,23 +216,13 @@ export default function FinancialInputsContent() {
           expanded={expandedSection === "cash"}
           onToggle={() => toggleSection("cash")}
         >
-          <CategoryBreakdown
+          <ItemList
             items={cashItems}
             total={cashTotal}
-            entityLabel="asset"
+            entityLabel="cash / savings"
             onEditItem={(id) => openEdit("asset", id)}
-            onAddItem={(cat) => openAdd("asset", cat)}
+            onAddItem={() => openAdd("asset")}
           />
-          <button
-            type="button"
-            onClick={() => openAdd("asset", "CASH_SAVINGS")}
-            className="mt-3 flex items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add cash / savings
-          </button>
         </InputCategoryCard>
 
         <InputCategoryCard
@@ -266,23 +236,13 @@ export default function FinancialInputsContent() {
           expanded={expandedSection === "investments"}
           onToggle={() => toggleSection("investments")}
         >
-          <CategoryBreakdown
+          <ItemList
             items={investmentItems}
             total={investmentTotal}
-            entityLabel="asset"
+            entityLabel="investment"
             onEditItem={(id) => openEdit("asset", id)}
-            onAddItem={(cat) => openAdd("asset", cat)}
+            onAddItem={() => openAdd("asset")}
           />
-          <button
-            type="button"
-            onClick={() => openAdd("asset", "INVESTMENTS")}
-            className="mt-3 flex items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add investment
-          </button>
         </InputCategoryCard>
 
         <InputCategoryCard
@@ -296,23 +256,13 @@ export default function FinancialInputsContent() {
           expanded={expandedSection === "debt"}
           onToggle={() => toggleSection("debt")}
         >
-          <CategoryBreakdown
+          <ItemList
             items={debtItems}
             total={debtTotal}
-            entityLabel="liability"
+            entityLabel="debt"
             onEditItem={(id) => openEdit("liability", id)}
-            onAddItem={(cat) => openAdd("liability", cat)}
+            onAddItem={() => openAdd("liability")}
           />
-          <button
-            type="button"
-            onClick={() => openAdd("liability")}
-            className="mt-3 flex items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add debt
-          </button>
         </InputCategoryCard>
 
         <InputCategoryCard

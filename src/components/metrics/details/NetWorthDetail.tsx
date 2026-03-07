@@ -1,6 +1,6 @@
 import Link from "next/link";
 import BreakdownBar from "@/components/ui/BreakdownBar";
-import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
+import CategorySummary from "@/components/ui/CategorySummary";
 import { formatCurrency } from "@/lib/format";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
 import type { BaselineResponse } from "@/types/baseline.types";
@@ -69,11 +69,10 @@ export default function NetWorthDetail({ snapshot, baseline, onAddItem, onEditIt
             )}
           </div>
           {assetItems.length > 0 ? (
-            <CategoryBreakdown
+            <CategorySummary
               items={assetItems}
               total={snapshot.totalAssets}
               onEditItem={onEditItem ? (id) => onEditItem("asset", id) : undefined}
-              onAddItem={onAddItem ? (cat) => onAddItem("asset", cat) : undefined}
               entityLabel="asset"
             />
           ) : (
@@ -97,11 +96,10 @@ export default function NetWorthDetail({ snapshot, baseline, onAddItem, onEditIt
             )}
           </div>
           {liabilityItems.length > 0 ? (
-            <CategoryBreakdown
+            <CategorySummary
               items={liabilityItems}
               total={snapshot.totalLiabilities}
               onEditItem={onEditItem ? (id) => onEditItem("liability", id) : undefined}
-              onAddItem={onAddItem ? (cat) => onAddItem("liability", cat) : undefined}
               entityLabel="liability"
             />
           ) : (

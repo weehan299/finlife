@@ -1,5 +1,5 @@
 import Link from "next/link";
-import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
+import CategorySummary from "@/components/ui/CategorySummary";
 import { formatCurrency } from "@/lib/format";
 import { DEFAULT_ASSUMPTIONS } from "@/lib/defaults";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
@@ -74,11 +74,10 @@ export default function DebtLoadDetail({ snapshot, baseline, onAddItem, onEditIt
                 </button>
               )}
             </div>
-            <CategoryBreakdown
+            <CategorySummary
               items={liabilityItems}
               total={snapshot.totalLiabilities}
               onEditItem={onEditItem ? (id) => onEditItem("liability", id) : undefined}
-              onAddItem={onAddItem ? (cat) => onAddItem("liability", cat) : undefined}
               entityLabel="liability"
             />
           </div>
