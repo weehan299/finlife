@@ -119,6 +119,7 @@ export interface EvaluateDecisionOutput extends DecisionResult {
   computedUpfrontAmount: number;
   computedMonthlyImpact: number;
   confidenceLevel: "HIGH" | "MEDIUM" | "LOW";
+  narrative: NarrativeData;
 }
 
 // ---------- Comparison row for UI ----------
@@ -130,6 +131,50 @@ export interface ComparisonRow {
   delta: number;
   status: GuardrailStatus;
   format: "currency" | "months" | "percent" | "ratio";
+}
+
+// ---------- Narrative data for results UI ----------
+
+export interface UpfrontWaterfallStep {
+  label: string;
+  amount: number;
+  runningTotal: number;
+}
+
+export interface ViabilityBreakpoint {
+  label: string;
+  currentValue: number;
+  breakpointValue: number;
+  unit: "currency" | "percent" | "months";
+}
+
+export interface VerdictExplanation {
+  headline: string;
+  primaryReason: string | null;
+  secondaryReasons: string[];
+  positives: string[];
+}
+
+export interface NarrativeData {
+  templateLabel: string;
+  verdictExplanation: VerdictExplanation;
+  upfrontWaterfall: UpfrontWaterfallStep[];
+  monthlyBreakdown: {
+    income: number;
+    existingExpenses: number;
+    newExpense: number;
+    newExpenseLabel: string;
+    remainingBuffer: number;
+  };
+  resilienceData: {
+    runwayMonths: number;
+    runwayStatus: "safe" | "borderline" | "unsafe";
+    stressedSurplus: number;
+    guaranteedIncome: number;
+  };
+  viabilityBreakpoints: ViabilityBreakpoint[];
+  isHousing: boolean;
+  monthlyHousingCost: number;
 }
 
 // ---------- Decision summary for list API ----------

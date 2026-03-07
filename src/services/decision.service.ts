@@ -16,6 +16,7 @@ import type {
   GuardrailStatus,
 } from "@/types/decision.types";
 import { buildSnapshot, resolveGuardrails } from "@/services/snapshot.service";
+import { buildNarrativeData } from "@/services/decision-narrative.service";
 
 // ---------- Amortization ----------
 
@@ -322,6 +323,17 @@ export async function evaluateDecision(input: {
   const verdict = deriveVerdict(guardrails, stressSnapshot, settings);
   const confidenceLevel = computeConfidence(baseline);
 
+  const narrative = buildNarrativeData({
+    template,
+    inputs,
+    impact,
+    baseline: baselineSnapshot,
+    postDecision: postDecisionSnapshot,
+    stressSnapshot,
+    settings,
+    guardrails,
+  });
+
   return {
     verdict,
     guardrails,
@@ -332,5 +344,6 @@ export async function evaluateDecision(input: {
     computedUpfrontAmount: impact.upfrontAmount,
     computedMonthlyImpact: impact.monthlyImpact,
     confidenceLevel,
+    narrative,
   };
 }
