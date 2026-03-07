@@ -1,6 +1,6 @@
 import Link from "next/link";
 import BreakdownBar from "@/components/ui/BreakdownBar";
-import CategoryBreakdown from "@/components/ui/CategoryBreakdown";
+import CategorySummary from "@/components/ui/CategorySummary";
 import { formatCurrency } from "@/lib/format";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
 import type { BaselineResponse } from "@/types/baseline.types";
@@ -68,11 +68,10 @@ export default function SurplusDetail({ snapshot, baseline, onAddItem, onEditIte
               </button>
             )}
           </div>
-          <CategoryBreakdown
+          <CategorySummary
             items={incomeItems}
             total={snapshot.monthlyIncome}
             onEditItem={onEditItem ? (id) => onEditItem("income", id) : undefined}
-            onAddItem={onAddItem ? (cat) => onAddItem("income", cat) : undefined}
             entityLabel="income"
           />
         </div>
@@ -92,11 +91,10 @@ export default function SurplusDetail({ snapshot, baseline, onAddItem, onEditIte
               </button>
             )}
           </div>
-          <CategoryBreakdown
+          <CategorySummary
             items={expenseItems}
             total={snapshot.monthlyExpenses}
             onEditItem={onEditItem ? (id) => onEditItem("expense", id) : undefined}
-            onAddItem={onAddItem ? (cat) => onAddItem("expense", cat) : undefined}
             entityLabel="expense"
           />
         </div>
