@@ -104,7 +104,7 @@ export default function SurplusDetail({ snapshot, baseline, onAddItem, onEditIte
 
       <div className="flex flex-wrap items-center gap-4 border-t border-gray-200 pt-4">
         <Link
-          href="/settings"
+          href="/settings?section=income"
           className="text-sm font-medium text-blue-600 hover:text-blue-800"
         >
           Manage all &rarr;

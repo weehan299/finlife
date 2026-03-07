@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { BaselineResponse } from "@/types/baseline.types";
 import type { ProjectionResponse } from "@/types/snapshot.types";
+import type { DrawerState, EntityType } from "@/types/drawer.types";
 import { computeSnapshot } from "@/lib/snapshot";
 import type { SnapshotWithExtras } from "@/lib/snapshot";
 import IntentSelector from "@/components/IntentSelector";
@@ -11,24 +12,9 @@ import SnapshotDisplay from "@/components/metrics/SnapshotDisplay";
 import ProjectionDisplay from "@/components/metrics/ProjectionDisplay";
 import NextActions from "@/components/NextActions";
 import Drawer from "@/components/ui/Drawer";
-import AssetForm from "@/components/forms/AssetForm";
-import LiabilityForm from "@/components/forms/LiabilityForm";
-import IncomeForm from "@/components/forms/IncomeForm";
-import ExpenseForm from "@/components/forms/ExpenseForm";
+import DrawerForm, { drawerTitles } from "@/components/forms/DrawerForm";
 
 type Step = "loading" | "intent" | "setup" | "snapshot";
-
-type EntityType = "asset" | "liability" | "income" | "expense";
-
-type DrawerState =
-  | { open: false }
-  | { open: true; mode: "add"; entityType: EntityType; defaultCategory?: string }
-  | { open: true; mode: "edit"; entityType: EntityType; itemId: string };
-
-const drawerTitles: Record<string, Record<string, string>> = {
-  add: { asset: "Add asset", liability: "Add liability", income: "Add income", expense: "Add expense" },
-  edit: { asset: "Edit asset", liability: "Edit liability", income: "Edit income", expense: "Edit expense" },
-};
 
 export default function OverviewContent() {
   const [step, setStep] = useState<Step>("loading");
@@ -184,68 +170,3 @@ export default function OverviewContent() {
   );
 }
 
-function DrawerForm({
-  drawer,
-  baseline,
-  onSuccess,
-}: {
-  drawer: DrawerState & { open: true };
-  baseline: BaselineResponse | null;
-  onSuccess: () => void;
-}) {
-  const { entityType, mode } = drawer;
-
-  if (entityType === "asset") {
-    const initialData =
-      mode === "edit" && baseline
-        ? baseline.assets.find((a) => a.id === drawer.itemId)
-        : undefined;
-    return (
-      <AssetForm
-        initialData={initialData}
-        defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
-        onSuccess={onSuccess}
-      />
-    );
-  }
-
-  if (entityType === "liability") {
-    const initialData =
-      mode === "edit" && baseline
-        ? baseline.liabilities.find((l) => l.id === drawer.itemId)
-        : undefined;
-    return (
-      <LiabilityForm
-        initialData={initialData}
-        defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
-        onSuccess={onSuccess}
-      />
-    );
-  }
-
-  if (entityType === "income") {
-    const initialData =
-      mode === "edit" && baseline
-        ? baseline.incomes.find((i) => i.id === drawer.itemId)
-        : undefined;
-    return (
-      <IncomeForm
-        initialData={initialData}
-        defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
-        onSuccess={onSuccess}
-      />
-    );
-  }
-
-  const initialData =
-    mode === "edit" && baseline
-      ? baseline.expenses.find((e) => e.id === drawer.itemId)
-      : undefined;
-  return (
-    <ExpenseForm
-      initialData={initialData}
-      defaultCategory={mode === "add" ? drawer.defaultCategory : undefined}
-      onSuccess={onSuccess}
-    />
-  );
-}

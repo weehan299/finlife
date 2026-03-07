@@ -15,7 +15,7 @@ const actions = [
   },
   {
     href: "/settings",
-    title: "Refine your inputs",
+    title: "Manage financial inputs",
     description: "Add detail to your income, expenses, and assets",
     primary: false,
   },

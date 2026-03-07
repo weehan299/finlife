@@ -5,7 +5,7 @@ const navItems = [
   { href: "/overview", label: "Overview" },
   { href: "/decisions", label: "Decisions" },
   { href: "/goals", label: "Goals" },
-  { href: "/settings", label: "Settings" },
+  { href: "/settings", label: "Financial Inputs" },
 ];
 
 export default function MainLayout({

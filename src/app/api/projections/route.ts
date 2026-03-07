@@ -3,7 +3,7 @@ import { ok } from "@/lib/api/response";
 import { requireAuth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DEFAULT_ASSUMPTIONS } from "@/lib/defaults";
-import { projectNetWorth } from "@/services/projection.service";
+import { projectNetWorthWithBreakdown } from "@/services/projection.service";
 import type { ProjectionResponse } from "@/types/snapshot.types";
 
 export const GET = withApi(async (_req: Request) => {
@@ -52,8 +52,9 @@ export const GET = withApi(async (_req: Request) => {
     }
   }
 
-  const milestones = projectNetWorth(
-    currentNetWorth,
+  const milestones = projectNetWorthWithBreakdown(
+    totalAssets,
+    totalLiabilities,
     monthlySurplus,
     investmentGrowthRate,
     milestoneMonths,
@@ -65,6 +66,8 @@ export const GET = withApi(async (_req: Request) => {
 
   const response: ProjectionResponse = {
     currentNetWorth,
+    currentTotalAssets: totalAssets,
+    currentTotalLiabilities: totalLiabilities,
     milestones,
     currentAge,
     retirementAge,

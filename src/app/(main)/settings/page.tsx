@@ -1,3 +1,5 @@
-export default function SettingsPage() {
-  return <h1 className="text-2xl font-semibold">Settings (placeholder)</h1>;
+import FinancialInputsContent from "./FinancialInputsContent";
+
+export default function FinancialInputsPage() {
+  return <FinancialInputsContent />;
 }

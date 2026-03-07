@@ -87,7 +87,7 @@ describe("API route auth guards", () => {
     });
   });
 
-  it("returns 501 (not 401) when authenticated — proving auth gate passed", async () => {
+  it("returns 200 (not 401) when authenticated — proving auth gate passed", async () => {
     mockAuth("clerk_test_authed_user");
 
     const mod: RouteModule = await import("@/app/api/settings/route");
@@ -98,8 +98,7 @@ describe("API route auth guards", () => {
     const res = await mod.GET(req);
     const body = await res.json();
 
-    expect(res.status).toBe(501);
-    expect(body.ok).toBe(false);
-    expect(body.error.code).toBe("NOT_IMPLEMENTED");
+    expect(res.status).toBe(200);
+    expect(body.ok).toBe(true);
   });
 });

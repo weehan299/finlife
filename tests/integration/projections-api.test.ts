@@ -148,6 +148,42 @@ describe("GET /api/projections", () => {
     expect(retirementMilestone).toBeDefined();
     expect(retirementMilestone.label).toContain("age 60");
   });
+
+  it("includes currentTotalAssets and currentTotalLiabilities in response", async () => {
+    const user = await createUser({ dateOfBirth: null });
+    mockAuth(user.clerkUserId);
+
+    await createAsset(user.id, { value: "100000.00" });
+    await createLiability(user.id, { balance: "20000.00" });
+
+    const { GET } = await import("@/app/api/projections/route");
+    const res = await GET(getReq());
+    const body = await res.json();
+
+    expect(body.data.currentTotalAssets).toBe(100000);
+    expect(body.data.currentTotalLiabilities).toBe(20000);
+    expect(body.data.currentNetWorth).toBe(80000);
+  });
+
+  it("includes totalAssets and totalLiabilities in each milestone", async () => {
+    const user = await createUser({ dateOfBirth: null });
+    mockAuth(user.clerkUserId);
+
+    await createAsset(user.id, { value: "100000.00" });
+    await createLiability(user.id, { balance: "20000.00" });
+    await createIncome(user.id, { monthlyAmount: "5000.00" });
+    await createExpense(user.id, { monthlyAmount: "3000.00" });
+
+    const { GET } = await import("@/app/api/projections/route");
+    const res = await GET(getReq());
+    const body = await res.json();
+
+    body.data.milestones.forEach((m: any) => {
+      expect(m.totalAssets).toBeDefined();
+      expect(m.totalLiabilities).toBeDefined();
+      expect(m.netWorth).toBeCloseTo(m.totalAssets - m.totalLiabilities, 2);
+    });
+  });
 });
 
 // ─── projectNetWorth (pure function) ────────────────────────
@@ -183,5 +219,60 @@ describe("projectNetWorth", () => {
 
     const result = projectNetWorth(100000, -2000, 0, [12]);
     expect(result[0].netWorth).toBe(76000);
+  });
+});
+
+// ─── projectNetWorthWithBreakdown (pure function) ───────────
+
+describe("projectNetWorthWithBreakdown", () => {
+  it("returns totalAssets and totalLiabilities in each milestone", async () => {
+    const { projectNetWorthWithBreakdown } = await import("@/services/projection.service");
+
+    const result = projectNetWorthWithBreakdown(100000, 20000, 1000, 0.05, [12, 60]);
+
+    result.forEach((m) => {
+      expect(m.totalAssets).toBeDefined();
+      expect(m.totalLiabilities).toBeDefined();
+    });
+  });
+
+  it("netWorth equals totalAssets minus totalLiabilities at every point", async () => {
+    const { projectNetWorthWithBreakdown } = await import("@/services/projection.service");
+
+    const result = projectNetWorthWithBreakdown(100000, 20000, 2000, 0.05, [12, 60, 120]);
+
+    result.forEach((m) => {
+      expect(m.netWorth).toBeCloseTo(m.totalAssets - m.totalLiabilities, 2);
+    });
+  });
+
+  it("with zero liabilities, totalAssets equals netWorth", async () => {
+    const { projectNetWorthWithBreakdown } = await import("@/services/projection.service");
+
+    const result = projectNetWorthWithBreakdown(50000, 0, 1000, 0.05, [12]);
+
+    expect(result[0].totalAssets).toBeCloseTo(result[0].netWorth, 2);
+    expect(result[0].totalLiabilities).toBe(0);
+  });
+
+  it("liabilities remain constant across milestones", async () => {
+    const { projectNetWorthWithBreakdown } = await import("@/services/projection.service");
+
+    const result = projectNetWorthWithBreakdown(100000, 30000, 1000, 0.05, [12, 60, 120, 240]);
+
+    result.forEach((m) => {
+      expect(m.totalLiabilities).toBe(30000);
+    });
+  });
+
+  it("with zero growth rate, assets equal initialAssets plus surplus times months", async () => {
+    const { projectNetWorthWithBreakdown } = await import("@/services/projection.service");
+
+    const result = projectNetWorthWithBreakdown(50000, 10000, 2000, 0, [12, 60]);
+
+    expect(result[0].totalAssets).toBe(50000 + 2000 * 12);
+    expect(result[1].totalAssets).toBe(50000 + 2000 * 60);
+    expect(result[0].netWorth).toBe(50000 + 2000 * 12 - 10000);
+    expect(result[1].netWorth).toBe(50000 + 2000 * 60 - 10000);
   });
 });

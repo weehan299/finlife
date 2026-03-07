@@ -124,6 +124,18 @@ Validation: non-negative numbers, at least one field > 0. Uses string state for 
 
 SVG-based net worth projection chart with milestone strip below. Renders data from `GET /api/projections`.
 
+**Hover tooltips:** Each data point has an invisible larger hit-target circle (`r={12}`). On hover:
+- Visible dot enlarges from `r={4}` to `r={6}`
+- HTML tooltip appears above showing milestone label, net worth, and breakdown:
+  - **Assets** (green) — total projected assets at that milestone
+  - **Liabilities** (red) — total projected liabilities (constant across timeline)
+- Tooltip positioned absolutely using percentage-based coords from SVG viewBox
+
+**Data & computation:**
+- `ProjectionResponse` includes `currentTotalAssets` and `currentTotalLiabilities`
+- Each `ProjectionMilestone` includes `totalAssets` and `totalLiabilities` (invariant: `netWorth = totalAssets - totalLiabilities`)
+- Projection service (`projectNetWorthWithBreakdown()`) compounds assets with monthly surplus while keeping liabilities constant
+
 Layout:
 - **Desktop (lg+):** constrained to `max-w-[50%]` so it aligns with 2 of the 4 KPI columns above
 - **Mobile/tablet:** full-width
