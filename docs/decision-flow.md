@@ -194,7 +194,8 @@ Save flow is non-blocking:
 | `VerdictBanner` | Color-coded banner (green/amber/red) with verdict + key stat |
 | `ComparisonTable` | Before/after table with delta coloring for 6 metrics |
 | `StressTestSection` | Stressed metric cards + guardrail check list |
-| `DecisionResults` | Composes VerdictBanner + ComparisonTable + StressTestSection |
+| `DecisionProjectionChart` | 12-month dual-line SVG cash projection (baseline vs with-decision) with safety target line, annotations, and insight label |
+| `DecisionResults` | Composes VerdictBanner + DecisionProjectionChart + ComparisonTable + StressTestSection |
 
 ### Decisions List Page
 

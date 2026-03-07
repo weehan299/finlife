@@ -1,5 +1,6 @@
 import type { EvaluateDecisionOutput } from "@/types/decision.types";
 import VerdictBanner from "./VerdictBanner";
+import DecisionProjectionChart from "./DecisionProjectionChart";
 import ComparisonTable from "./ComparisonTable";
 import StressTestSection from "./StressTestSection";
 
@@ -15,6 +16,8 @@ export default function DecisionResults({ result }: DecisionResultsProps) {
         monthlySurplus={result.postDecisionSnapshot.monthlySurplus}
         confidenceLevel={result.confidenceLevel}
       />
+
+      <DecisionProjectionChart result={result} />
 
       <div>
         <h3 className="mb-3 text-lg font-semibold text-gray-900">
