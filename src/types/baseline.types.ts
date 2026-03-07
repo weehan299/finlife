@@ -50,7 +50,7 @@ export interface SerializedExpense {
   label: string;
   monthlyAmount: number;
   stressMonthlyAmount: number | null;
-  isEssential: boolean;
+  isVariable: boolean;
   provenance: string;
   createdAt: string;
   updatedAt: string;

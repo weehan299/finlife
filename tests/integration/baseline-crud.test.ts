@@ -44,7 +44,7 @@ describe("POST /api/baseline/assets", () => {
     const { POST } = await import("@/app/api/baseline/assets/route");
     const res = await POST(
       postReq("http://localhost:3000/api/baseline/assets", {
-        category: "SAVINGS",
+        category: "CASH_SAVINGS",
         label: "Emergency Fund",
         value: 10000,
         isLiquid: true,
@@ -83,7 +83,7 @@ describe("POST /api/baseline/assets", () => {
     const { POST } = await import("@/app/api/baseline/assets/route");
     const res = await POST(
       postReq("http://localhost:3000/api/baseline/assets", {
-        category: "SAVINGS",
+        category: "CASH_SAVINGS",
         value: 100,
       }),
     );
@@ -220,7 +220,7 @@ describe("POST /api/baseline/income", () => {
     const { POST } = await import("@/app/api/baseline/income/route");
     const res = await POST(
       postReq("http://localhost:3000/api/baseline/income", {
-        category: "TAKE_HOME",
+        category: "SALARY",
         label: "Salary",
         monthlyAmount: 5000,
       }),
@@ -279,7 +279,7 @@ describe("POST /api/baseline/expenses", () => {
     const { POST } = await import("@/app/api/baseline/expenses/route");
     const res = await POST(
       postReq("http://localhost:3000/api/baseline/expenses", {
-        category: "ESSENTIAL_FIXED",
+        category: "ESSENTIAL",
         label: "Rent",
         monthlyAmount: 1500,
       }),

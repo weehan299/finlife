@@ -35,7 +35,7 @@ describe("computeSnapshot", () => {
         assets: [
           {
             id: "a1",
-            category: "SAVINGS",
+            category: "CASH_SAVINGS",
             label: "Savings",
             value: 10000,
             isLiquid: true,
@@ -61,7 +61,7 @@ describe("computeSnapshot", () => {
         liabilities: [
           {
             id: "l1",
-            category: "OTHER",
+            category: "OTHER_DEBT",
             label: "Debt",
             balance: 5000,
             annualInterestRate: null,
@@ -75,7 +75,7 @@ describe("computeSnapshot", () => {
         incomes: [
           {
             id: "i1",
-            category: "TAKE_HOME",
+            category: "SALARY",
             label: "Pay",
             monthlyAmount: 5000,
             isGuaranteed: true,
@@ -87,11 +87,11 @@ describe("computeSnapshot", () => {
         expenses: [
           {
             id: "e1",
-            category: "ESSENTIAL_FIXED",
+            category: "ESSENTIAL",
             label: "Rent",
             monthlyAmount: 2000,
             stressMonthlyAmount: null,
-            isEssential: true,
+            isVariable: false,
             provenance: "USER_ESTIMATED",
             createdAt: "",
             updatedAt: "",
@@ -117,7 +117,7 @@ describe("computeSnapshot", () => {
         incomes: [
           {
             id: "i1",
-            category: "TAKE_HOME",
+            category: "SALARY",
             label: "Pay",
             monthlyAmount: 3000,
             isGuaranteed: true,
@@ -129,11 +129,11 @@ describe("computeSnapshot", () => {
         expenses: [
           {
             id: "e1",
-            category: "ESSENTIAL_FIXED",
+            category: "ESSENTIAL",
             label: "Expenses",
             monthlyAmount: 4500,
             stressMonthlyAmount: null,
-            isEssential: true,
+            isVariable: false,
             provenance: "USER_ESTIMATED",
             createdAt: "",
             updatedAt: "",
@@ -152,7 +152,7 @@ describe("computeSnapshot", () => {
         liabilities: [
           {
             id: "l1",
-            category: "OTHER",
+            category: "OTHER_DEBT",
             label: "Debt",
             balance: 10000,
             annualInterestRate: null,
@@ -176,7 +176,7 @@ describe("computeSnapshot", () => {
         assets: [
           {
             id: "a1",
-            category: "SAVINGS",
+            category: "CASH_SAVINGS",
             label: "Cash",
             value: 5000,
             isLiquid: true,

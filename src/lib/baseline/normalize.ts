@@ -21,7 +21,7 @@ export function normalizeQuickBaseline(
 
   if (input.totalSavings != null && input.totalSavings > 0) {
     assets.push({
-      category: "SAVINGS",
+      category: "CASH_SAVINGS",
       label: "Savings",
       value: input.totalSavings,
       isLiquid: true,
@@ -41,7 +41,7 @@ export function normalizeQuickBaseline(
 
   if (input.totalDebt != null && input.totalDebt > 0) {
     liabilities.push({
-      category: "OTHER",
+      category: "OTHER_DEBT",
       label: "Total debt",
       balance: input.totalDebt,
       provenance: "USER_ESTIMATED",
@@ -50,7 +50,7 @@ export function normalizeQuickBaseline(
 
   if (input.monthlyTakeHome != null && input.monthlyTakeHome > 0) {
     incomes.push({
-      category: "TAKE_HOME",
+      category: "SALARY",
       label: "Take-home pay",
       monthlyAmount: input.monthlyTakeHome,
       isGuaranteed: true,
@@ -63,10 +63,10 @@ export function normalizeQuickBaseline(
     input.monthlyEssentialExpenses > 0
   ) {
     expenses.push({
-      category: "ESSENTIAL_FIXED",
+      category: "ESSENTIAL",
       label: "Essential expenses",
       monthlyAmount: input.monthlyEssentialExpenses,
-      isEssential: true,
+      isVariable: false,
       provenance: "USER_ESTIMATED",
     });
   }
@@ -76,10 +76,10 @@ export function normalizeQuickBaseline(
     input.monthlyDiscretionaryExpenses > 0
   ) {
     expenses.push({
-      category: "DISCRETIONARY",
+      category: "FLEXIBLE",
       label: "Discretionary expenses",
       monthlyAmount: input.monthlyDiscretionaryExpenses,
-      isEssential: false,
+      isVariable: false,
       provenance: "USER_ESTIMATED",
     });
   }

@@ -15,8 +15,7 @@ describe("Asset", () => {
   it("creates one asset per AssetCategory", async () => {
     const user = await createUser();
     const categories = [
-      "CASH_CHECKING",
-      "SAVINGS",
+      "CASH_SAVINGS",
       "INVESTMENTS",
       "RETIREMENT",
       "PROPERTY",
@@ -32,7 +31,7 @@ describe("Asset", () => {
     }
 
     const count = await prisma.asset.count({ where: { userId: user.id } });
-    expect(count).toBe(6);
+    expect(count).toBe(5);
   });
 
   it("stores Decimal(14,2) boundary values", async () => {
@@ -103,14 +102,14 @@ describe("Asset", () => {
 
   it("queries by composite index (userId, category)", async () => {
     const user = await createUser();
-    await createAsset(user.id, { category: "CASH_CHECKING" });
+    await createAsset(user.id, { category: "CASH_SAVINGS" });
     await createAsset(user.id, {
-      category: "SAVINGS",
-      label: "Savings",
+      category: "INVESTMENTS",
+      label: "Investments",
     });
 
     const results = await prisma.asset.findMany({
-      where: { userId: user.id, category: "CASH_CHECKING" },
+      where: { userId: user.id, category: "CASH_SAVINGS" },
     });
     expect(results).toHaveLength(1);
   });
@@ -134,9 +133,9 @@ describe("Liability", () => {
     const categories = [
       "CREDIT_CARD",
       "STUDENT_LOAN",
-      "PERSONAL_LOAN",
+      "LOAN",
       "MORTGAGE",
-      "OTHER",
+      "OTHER_DEBT",
     ] as const;
 
     for (const category of categories) {
@@ -180,11 +179,10 @@ describe("Income", () => {
   it("creates one income per IncomeCategory", async () => {
     const user = await createUser();
     const categories = [
-      "TAKE_HOME",
-      "GROSS",
-      "OTHER_RECURRING",
-      "VARIABLE",
-      "FALLBACK",
+      "SALARY",
+      "SIDE_INCOME",
+      "BENEFITS",
+      "OTHER_INCOME",
     ] as const;
 
     for (const category of categories) {
@@ -196,7 +194,7 @@ describe("Income", () => {
     }
 
     const count = await prisma.income.count({ where: { userId: user.id } });
-    expect(count).toBe(5);
+    expect(count).toBe(4);
   });
 
   it("defaults isGuaranteed to true", async () => {
@@ -225,9 +223,8 @@ describe("Expense", () => {
   it("creates one expense per ExpenseCategory", async () => {
     const user = await createUser();
     const categories = [
-      "ESSENTIAL_FIXED",
-      "ESSENTIAL_VARIABLE",
-      "DISCRETIONARY",
+      "ESSENTIAL",
+      "FLEXIBLE",
     ] as const;
 
     for (const category of categories) {
@@ -239,14 +236,14 @@ describe("Expense", () => {
     }
 
     const count = await prisma.expense.count({ where: { userId: user.id } });
-    expect(count).toBe(3);
+    expect(count).toBe(2);
   });
 
-  it("defaults isEssential to true and stressMonthlyAmount to null", async () => {
+  it("defaults isVariable to false and stressMonthlyAmount to null", async () => {
     const user = await createUser();
     const expense = await createExpense(user.id);
 
-    expect(expense.isEssential).toBe(true);
+    expect(expense.isVariable).toBe(false);
     expect(expense.stressMonthlyAmount).toBeNull();
   });
 
@@ -259,16 +256,16 @@ describe("Expense", () => {
     expect(Number(expense.stressMonthlyAmount)).toBeCloseTo(1200, 2);
   });
 
-  it("queries by composite index (userId, isEssential)", async () => {
+  it("queries by composite index (userId, category)", async () => {
     const user = await createUser();
-    await createExpense(user.id, { isEssential: true, label: "Essential" });
+    await createExpense(user.id, { category: "ESSENTIAL", label: "Essential" });
     await createExpense(user.id, {
-      isEssential: false,
-      label: "Non-essential",
+      category: "FLEXIBLE",
+      label: "Flexible",
     });
 
     const essential = await prisma.expense.findMany({
-      where: { userId: user.id, isEssential: true },
+      where: { userId: user.id, category: "ESSENTIAL" },
     });
     expect(essential).toHaveLength(1);
     expect(essential[0].label).toBe("Essential");

@@ -12,12 +12,12 @@ interface ExpenseFormProps {
 
 export default function ExpenseForm({ initialData, defaultCategory, onSuccess }: ExpenseFormProps) {
   const isEdit = !!initialData;
-  const [category, setCategory] = useState(initialData?.category ?? defaultCategory ?? "ESSENTIAL_FIXED");
+  const [category, setCategory] = useState(initialData?.category ?? defaultCategory ?? "ESSENTIAL");
   const [label, setLabel] = useState(initialData?.label ?? "");
   const [monthlyAmount, setMonthlyAmount] = useState(
     initialData ? String(initialData.monthlyAmount) : "",
   );
-  const [isEssential, setIsEssential] = useState(initialData?.isEssential ?? true);
+  const [isVariable, setIsVariable] = useState(initialData?.isVariable ?? false);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export default function ExpenseForm({ initialData, defaultCategory, onSuccess }:
       category,
       label,
       monthlyAmount: monthlyAmount === "" ? 0 : Number(monthlyAmount),
-      isEssential,
+      isVariable,
     };
 
     const result = expenseInputSchema.safeParse(payload);
@@ -134,14 +134,14 @@ export default function ExpenseForm({ initialData, defaultCategory, onSuccess }:
 
       <div className="flex items-center gap-2">
         <input
-          id="expense-essential"
+          id="expense-variable"
           type="checkbox"
-          checked={isEssential}
-          onChange={(e) => setIsEssential(e.target.checked)}
+          checked={isVariable}
+          onChange={(e) => setIsVariable(e.target.checked)}
           className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <label htmlFor="expense-essential" className="text-sm text-gray-700">
-          Essential (rent, utilities, groceries)
+        <label htmlFor="expense-variable" className="text-sm text-gray-700">
+          Changes month to month
         </label>
       </div>
 

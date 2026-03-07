@@ -23,7 +23,7 @@ async function createFullUserGraph(suffix: string) {
   );
 
   const asset1 = await createAsset(user.id, {
-    category: "CASH_CHECKING",
+    category: "CASH_SAVINGS",
     label: `Checking ${suffix}`,
   });
   const asset2 = await createAsset(user.id, {

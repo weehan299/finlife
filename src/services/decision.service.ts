@@ -165,7 +165,7 @@ export function computeStressSnapshot(
 
   let stressExpenses = 0;
   for (const e of baselineData.expenses) {
-    if (e.isEssential) {
+    if (e.category === "ESSENTIAL") {
       stressExpenses += e.stressMonthlyAmount ?? e.monthlyAmount;
     } else {
       const reduced = e.monthlyAmount * (1 - settings.stressExpenseReductionRate);

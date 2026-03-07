@@ -224,9 +224,9 @@ describe("evaluateDecision (integration)", () => {
 
   it("evaluates a ONE_TIME_EXPENSE for a user with baseline data", async () => {
     const user = await createUser();
-    await createAsset(user.id, { value: 50000, isLiquid: true, category: "SAVINGS", label: "Savings" });
-    await createIncome(user.id, { monthlyAmount: 6000, isGuaranteed: true, category: "TAKE_HOME", label: "Salary" });
-    await createExpense(user.id, { monthlyAmount: 3000, isEssential: true, category: "ESSENTIAL_FIXED", label: "Rent" });
+    await createAsset(user.id, { value: 50000, isLiquid: true, category: "CASH_SAVINGS", label: "Savings" });
+    await createIncome(user.id, { monthlyAmount: 6000, isGuaranteed: true, category: "SALARY", label: "Salary" });
+    await createExpense(user.id, { monthlyAmount: 3000, category: "ESSENTIAL", label: "Rent" });
 
     const result = await evaluateDecision({
       template: "ONE_TIME_EXPENSE",
@@ -246,12 +246,12 @@ describe("evaluateDecision (integration)", () => {
 
   it("evaluates HOME_PURCHASE with full data", async () => {
     const user = await createUser();
-    await createAsset(user.id, { value: 100000, isLiquid: true, category: "SAVINGS", label: "Savings" });
+    await createAsset(user.id, { value: 100000, isLiquid: true, category: "CASH_SAVINGS", label: "Savings" });
     await createAsset(user.id, { value: 200000, isLiquid: false, category: "INVESTMENTS", label: "Investments" });
-    await createLiability(user.id, { balance: 10000, category: "PERSONAL_LOAN", label: "Car loan" });
-    await createIncome(user.id, { monthlyAmount: 8000, isGuaranteed: true, category: "TAKE_HOME", label: "Salary" });
-    await createExpense(user.id, { monthlyAmount: 2000, isEssential: true, category: "ESSENTIAL_FIXED", label: "Current rent" });
-    await createExpense(user.id, { monthlyAmount: 500, isEssential: false, category: "DISCRETIONARY", label: "Fun" });
+    await createLiability(user.id, { balance: 10000, category: "LOAN", label: "Car loan" });
+    await createIncome(user.id, { monthlyAmount: 8000, isGuaranteed: true, category: "SALARY", label: "Salary" });
+    await createExpense(user.id, { monthlyAmount: 2000, category: "ESSENTIAL", label: "Current rent" });
+    await createExpense(user.id, { monthlyAmount: 500, category: "FLEXIBLE", label: "Fun" });
 
     const result = await evaluateDecision({
       template: "HOME_PURCHASE",
@@ -293,10 +293,10 @@ describe("buildSnapshot + resolveGuardrails", () => {
 
   it("buildSnapshot returns correct totals", async () => {
     const user = await createUser();
-    await createAsset(user.id, { value: 10000, isLiquid: true, category: "SAVINGS", label: "Cash" });
+    await createAsset(user.id, { value: 10000, isLiquid: true, category: "CASH_SAVINGS", label: "Cash" });
     await createAsset(user.id, { value: 20000, isLiquid: false, category: "INVESTMENTS", label: "Stocks" });
-    await createIncome(user.id, { monthlyAmount: 5000, isGuaranteed: true, category: "TAKE_HOME", label: "Pay" });
-    await createExpense(user.id, { monthlyAmount: 3000, isEssential: true, category: "ESSENTIAL_FIXED", label: "Rent" });
+    await createIncome(user.id, { monthlyAmount: 5000, isGuaranteed: true, category: "SALARY", label: "Pay" });
+    await createExpense(user.id, { monthlyAmount: 3000, category: "ESSENTIAL", label: "Rent" });
 
     const { snapshot } = await buildSnapshot(user.id);
 

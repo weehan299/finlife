@@ -58,7 +58,7 @@ export function serializeExpense(e: Expense) {
     label: e.label,
     monthlyAmount: Number(e.monthlyAmount),
     stressMonthlyAmount: toNum(e.stressMonthlyAmount),
-    isEssential: e.isEssential,
+    isVariable: e.isVariable,
     provenance: e.provenance,
     createdAt: toISO(e.createdAt),
     updatedAt: toISO(e.updatedAt),

@@ -52,7 +52,7 @@ type AssetOverrides = Partial<Omit<Prisma.AssetCreateWithoutUserInput, "user">>;
 export async function createAsset(userId: string, overrides: AssetOverrides = {}) {
   return prisma.asset.create({
     data: {
-      category: "CASH_CHECKING",
+      category: "CASH_SAVINGS",
       label: "Test Asset",
       value: "1000.00",
       userId,
@@ -92,7 +92,7 @@ export async function createIncome(
 ) {
   return prisma.income.create({
     data: {
-      category: "TAKE_HOME",
+      category: "SALARY",
       label: "Test Income",
       monthlyAmount: "5000.00",
       userId,
@@ -113,7 +113,7 @@ export async function createExpense(
 ) {
   return prisma.expense.create({
     data: {
-      category: "ESSENTIAL_FIXED",
+      category: "ESSENTIAL",
       label: "Test Expense",
       monthlyAmount: "1500.00",
       userId,

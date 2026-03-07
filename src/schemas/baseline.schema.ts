@@ -3,8 +3,7 @@ import { z } from "zod";
 // ─── Enum schemas ────────────────────────────────────────
 
 export const assetCategorySchema = z.enum([
-  "CASH_CHECKING",
-  "SAVINGS",
+  "CASH_SAVINGS",
   "INVESTMENTS",
   "RETIREMENT",
   "PROPERTY",
@@ -14,23 +13,21 @@ export const assetCategorySchema = z.enum([
 export const liabilityCategorySchema = z.enum([
   "CREDIT_CARD",
   "STUDENT_LOAN",
-  "PERSONAL_LOAN",
+  "LOAN",
   "MORTGAGE",
-  "OTHER",
+  "OTHER_DEBT",
 ]);
 
 export const incomeCategorySchema = z.enum([
-  "TAKE_HOME",
-  "GROSS",
-  "OTHER_RECURRING",
-  "VARIABLE",
-  "FALLBACK",
+  "SALARY",
+  "SIDE_INCOME",
+  "BENEFITS",
+  "OTHER_INCOME",
 ]);
 
 export const expenseCategorySchema = z.enum([
-  "ESSENTIAL_FIXED",
-  "ESSENTIAL_VARIABLE",
-  "DISCRETIONARY",
+  "ESSENTIAL",
+  "FLEXIBLE",
 ]);
 
 export const provenanceSchema = z.enum([
@@ -74,7 +71,7 @@ export const expenseInputSchema = z.object({
   label: z.string().min(1).max(120),
   monthlyAmount: z.number().positive(),
   stressMonthlyAmount: z.number().nonnegative().optional(),
-  isEssential: z.boolean().default(true),
+  isVariable: z.boolean().default(false),
   provenance: provenanceSchema.default("USER_ENTERED"),
 });
 

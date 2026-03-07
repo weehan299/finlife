@@ -1,6 +1,5 @@
 export const assetCategoryLabels: Record<string, string> = {
-  CASH_CHECKING: "Cash & Checking",
-  SAVINGS: "Savings",
+  CASH_SAVINGS: "Cash & Savings",
   INVESTMENTS: "Investments",
   RETIREMENT: "Retirement",
   PROPERTY: "Property",
@@ -10,23 +9,21 @@ export const assetCategoryLabels: Record<string, string> = {
 export const liabilityCategoryLabels: Record<string, string> = {
   CREDIT_CARD: "Credit Card",
   STUDENT_LOAN: "Student Loan",
-  PERSONAL_LOAN: "Personal Loan",
+  LOAN: "Loan",
   MORTGAGE: "Mortgage",
-  OTHER: "Other",
+  OTHER_DEBT: "Other Debt",
 };
 
 export const incomeCategoryLabels: Record<string, string> = {
-  TAKE_HOME: "Take-Home Pay",
-  GROSS: "Gross Pay",
-  OTHER_RECURRING: "Other Recurring",
-  VARIABLE: "Variable",
-  FALLBACK: "Fallback",
+  SALARY: "Salary",
+  SIDE_INCOME: "Side Income",
+  BENEFITS: "Benefits",
+  OTHER_INCOME: "Other Income",
 };
 
 export const expenseCategoryLabels: Record<string, string> = {
-  ESSENTIAL_FIXED: "Essential (Fixed)",
-  ESSENTIAL_VARIABLE: "Essential (Variable)",
-  DISCRETIONARY: "Discretionary",
+  ESSENTIAL: "Essential",
+  FLEXIBLE: "Flexible",
 };
 
 const allLabels: Record<string, string> = {

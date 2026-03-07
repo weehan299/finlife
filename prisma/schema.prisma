@@ -20,8 +20,7 @@ enum InputProvenance {
 }
 
 enum AssetCategory {
-  CASH_CHECKING
-  SAVINGS
+  CASH_SAVINGS
   INVESTMENTS
   RETIREMENT
   PROPERTY
@@ -31,23 +30,21 @@ enum AssetCategory {
 enum LiabilityCategory {
   CREDIT_CARD
   STUDENT_LOAN
-  PERSONAL_LOAN
+  LOAN
   MORTGAGE
-  OTHER
+  OTHER_DEBT
 }
 
 enum IncomeCategory {
-  TAKE_HOME
-  GROSS
-  OTHER_RECURRING
-  VARIABLE
-  FALLBACK
+  SALARY
+  SIDE_INCOME
+  BENEFITS
+  OTHER_INCOME
 }
 
 enum ExpenseCategory {
-  ESSENTIAL_FIXED
-  ESSENTIAL_VARIABLE
-  DISCRETIONARY
+  ESSENTIAL
+  FLEXIBLE
 }
 
 enum GoalType {
@@ -207,7 +204,7 @@ model Expense {
   label               String
   monthlyAmount       Decimal         @db.Decimal(14, 2)
   stressMonthlyAmount Decimal?        @db.Decimal(14, 2)
-  isEssential         Boolean         @default(true)
+  isVariable          Boolean         @default(false)
   provenance          InputProvenance @default(USER_ENTERED)
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
@@ -215,7 +212,6 @@ model Expense {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, category])
-  @@index([userId, isEssential])
 }
 
 model Goal {

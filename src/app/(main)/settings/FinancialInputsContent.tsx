@@ -27,7 +27,7 @@ interface SettingsData {
   maxHousingRatio: number;
 }
 
-const CASH_CATEGORIES = new Set(["CASH_CHECKING", "SAVINGS"]);
+const CASH_CATEGORIES = new Set(["CASH_SAVINGS"]);
 const INVESTMENT_CATEGORIES = new Set(["INVESTMENTS", "RETIREMENT", "PROPERTY", "OTHER"]);
 
 const assumptionLabels: Record<string, string> = {
@@ -245,7 +245,7 @@ export default function FinancialInputsContent() {
           />
           <button
             type="button"
-            onClick={() => openAdd("asset", "SAVINGS")}
+            onClick={() => openAdd("asset", "CASH_SAVINGS")}
             className="mt-3 flex items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

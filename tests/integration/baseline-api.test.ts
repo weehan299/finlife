@@ -147,16 +147,16 @@ describe("PUT /api/baseline (detailed)", () => {
 
     const payload = {
       dateOfBirth: "1990-05-20",
-      assets: [{ category: "SAVINGS", label: "Emergency Fund", value: 10000 }],
+      assets: [{ category: "CASH_SAVINGS", label: "Emergency Fund", value: 10000 }],
       liabilities: [
         { category: "CREDIT_CARD", label: "Visa", balance: 2000 },
       ],
       incomes: [
-        { category: "TAKE_HOME", label: "Salary", monthlyAmount: 5000 },
+        { category: "SALARY", label: "Salary", monthlyAmount: 5000 },
       ],
       expenses: [
         {
-          category: "ESSENTIAL_FIXED",
+          category: "ESSENTIAL",
           label: "Rent",
           monthlyAmount: 1500,
         },
@@ -185,7 +185,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const res = await PUT(
       json({
         dateOfBirth: "1990-05-20",
-        assets: [{ category: "SAVINGS", label: "New asset", value: 500 }],
+        assets: [{ category: "CASH_SAVINGS", label: "New asset", value: 500 }],
       }),
     );
     const body = await res.json();
@@ -224,7 +224,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const res = await PUT(
       json({
         dateOfBirth: "1990-05-20",
-        assets: [{ category: "SAVINGS", value: 100 }],
+        assets: [{ category: "CASH_SAVINGS", value: 100 }],
       }),
     );
 
@@ -239,7 +239,7 @@ describe("PUT /api/baseline (detailed)", () => {
     const res = await PUT(
       json({
         dateOfBirth: "1990-05-20",
-        assets: [{ category: "SAVINGS", label: "Bad", value: -100 }],
+        assets: [{ category: "CASH_SAVINGS", label: "Bad", value: -100 }],
       }),
     );
 
@@ -270,7 +270,7 @@ describe("PUT /api/baseline (detailed)", () => {
     await PUT(
       json({
         dateOfBirth: "1990-05-20",
-        assets: [{ category: "SAVINGS", label: "A's new", value: 1000 }],
+        assets: [{ category: "CASH_SAVINGS", label: "A's new", value: 1000 }],
       }),
     );
 
@@ -391,7 +391,7 @@ describe("PUT /api/baseline (dateOfBirth)", () => {
     const { PUT } = await import("@/app/api/baseline/route");
     const res = await PUT(
       json({
-        assets: [{ category: "SAVINGS", label: "Test", value: 100 }],
+        assets: [{ category: "CASH_SAVINGS", label: "Test", value: 100 }],
       }),
     );
 

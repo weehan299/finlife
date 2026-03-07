@@ -13,7 +13,7 @@ function serializeBaseline(
     assets: { id: string; category: string; label: string; value: unknown; isLiquid: boolean; monthlyContribution: unknown; annualGrowthRateOverride: unknown; provenance: string; createdAt: Date; updatedAt: Date }[];
     liabilities: { id: string; category: string; label: string; balance: unknown; annualInterestRate: unknown; minimumPayment: unknown; remainingTermMonths: unknown; provenance: string; createdAt: Date; updatedAt: Date }[];
     incomes: { id: string; category: string; label: string; monthlyAmount: unknown; isGuaranteed: boolean; provenance: string; createdAt: Date; updatedAt: Date }[];
-    expenses: { id: string; category: string; label: string; monthlyAmount: unknown; stressMonthlyAmount: unknown; isEssential: boolean; provenance: string; createdAt: Date; updatedAt: Date }[];
+    expenses: { id: string; category: string; label: string; monthlyAmount: unknown; stressMonthlyAmount: unknown; isVariable: boolean; provenance: string; createdAt: Date; updatedAt: Date }[];
   },
 ): BaselineResponse {
   return {
@@ -58,7 +58,7 @@ function serializeBaseline(
       label: e.label,
       monthlyAmount: Number(e.monthlyAmount),
       stressMonthlyAmount: e.stressMonthlyAmount != null ? Number(e.stressMonthlyAmount) : null,
-      isEssential: e.isEssential,
+      isVariable: e.isVariable,
       provenance: e.provenance,
       createdAt: e.createdAt.toISOString(),
       updatedAt: e.updatedAt.toISOString(),

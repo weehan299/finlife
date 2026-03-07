@@ -12,7 +12,7 @@ interface IncomeFormProps {
 
 export default function IncomeForm({ initialData, defaultCategory, onSuccess }: IncomeFormProps) {
   const isEdit = !!initialData;
-  const [category, setCategory] = useState(initialData?.category ?? defaultCategory ?? "TAKE_HOME");
+  const [category, setCategory] = useState(initialData?.category ?? defaultCategory ?? "SALARY");
   const [label, setLabel] = useState(initialData?.label ?? "");
   const [monthlyAmount, setMonthlyAmount] = useState(
     initialData ? String(initialData.monthlyAmount) : "",

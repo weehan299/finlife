@@ -23,7 +23,7 @@ describe("Required field violations", () => {
       prisma.asset.create({
         data: {
           userId: user.id,
-          category: "CASH_CHECKING",
+          category: "CASH_SAVINGS",
           value: "100.00",
         } as any,
       })
@@ -50,7 +50,7 @@ describe("Foreign key violations", () => {
       prisma.asset.create({
         data: {
           userId: "nonexistent_cuid_12345",
-          category: "CASH_CHECKING",
+          category: "CASH_SAVINGS",
           label: "Orphan",
           value: "100.00",
         },

@@ -12,7 +12,7 @@ interface AssetFormProps {
 
 export default function AssetForm({ initialData, defaultCategory, onSuccess }: AssetFormProps) {
   const isEdit = !!initialData;
-  const [category, setCategory] = useState(initialData?.category ?? defaultCategory ?? "SAVINGS");
+  const [category, setCategory] = useState(initialData?.category ?? defaultCategory ?? "CASH_SAVINGS");
   const [label, setLabel] = useState(initialData?.label ?? "");
   const [value, setValue] = useState(initialData ? String(initialData.value) : "");
   const [isLiquid, setIsLiquid] = useState(initialData?.isLiquid ?? false);

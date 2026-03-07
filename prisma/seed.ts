@@ -43,13 +43,13 @@ async function main() {
     },
   });
 
-  // ── Alice's Assets (all 6 categories) ──────────────────
+  // ── Alice's Assets (all 5 categories) ──────────────────
 
   const aliceAssets = await Promise.all([
     prisma.asset.create({
       data: {
         userId: alice.id,
-        category: "CASH_CHECKING",
+        category: "CASH_SAVINGS",
         label: "Chase Checking",
         value: "8500.00",
         isLiquid: true,
@@ -59,7 +59,7 @@ async function main() {
     prisma.asset.create({
       data: {
         userId: alice.id,
-        category: "SAVINGS",
+        category: "CASH_SAVINGS",
         label: "Ally Savings",
         value: "25000.00",
         isLiquid: true,
@@ -114,7 +114,7 @@ async function main() {
     }),
   ]);
 
-  // ── Alice's Liabilities (MORTGAGE, STUDENT_LOAN, OTHER) ─
+  // ── Alice's Liabilities (MORTGAGE, STUDENT_LOAN, OTHER_DEBT) ─
 
   await Promise.all([
     prisma.liability.create({
@@ -144,7 +144,7 @@ async function main() {
     prisma.liability.create({
       data: {
         userId: alice.id,
-        category: "OTHER",
+        category: "OTHER_DEBT",
         label: "Car Loan",
         balance: "12000.00",
         annualInterestRate: "0.0550",
@@ -155,13 +155,13 @@ async function main() {
     }),
   ]);
 
-  // ── Alice's Incomes (TAKE_HOME, OTHER_RECURRING, VARIABLE) ─
+  // ── Alice's Incomes (SALARY, BENEFITS, SIDE_INCOME) ─
 
   await Promise.all([
     prisma.income.create({
       data: {
         userId: alice.id,
-        category: "TAKE_HOME",
+        category: "SALARY",
         label: "Software Engineer Salary",
         monthlyAmount: "8500.00",
         isGuaranteed: true,
@@ -171,7 +171,7 @@ async function main() {
     prisma.income.create({
       data: {
         userId: alice.id,
-        category: "OTHER_RECURRING",
+        category: "BENEFITS",
         label: "Rental Income",
         monthlyAmount: "1200.00",
         isGuaranteed: true,
@@ -181,7 +181,7 @@ async function main() {
     prisma.income.create({
       data: {
         userId: alice.id,
-        category: "VARIABLE",
+        category: "SIDE_INCOME",
         label: "Freelance Consulting",
         monthlyAmount: "2000.00",
         isGuaranteed: false,
@@ -190,49 +190,49 @@ async function main() {
     }),
   ]);
 
-  // ── Alice's Expenses (all 4 categories) ────────────────
+  // ── Alice's Expenses (ESSENTIAL + FLEXIBLE, with isVariable) ─
 
   await Promise.all([
     prisma.expense.create({
       data: {
         userId: alice.id,
-        category: "ESSENTIAL_FIXED",
+        category: "ESSENTIAL",
         label: "Mortgage Payment",
         monthlyAmount: "1890.00",
         stressMonthlyAmount: "1890.00",
-        isEssential: true,
+        isVariable: false,
         provenance: "USER_ENTERED",
       },
     }),
     prisma.expense.create({
       data: {
         userId: alice.id,
-        category: "ESSENTIAL_VARIABLE",
+        category: "ESSENTIAL",
         label: "Groceries & Utilities",
         monthlyAmount: "800.00",
         stressMonthlyAmount: "600.00",
-        isEssential: true,
+        isVariable: true,
         provenance: "USER_ESTIMATED",
       },
     }),
     prisma.expense.create({
       data: {
         userId: alice.id,
-        category: "DISCRETIONARY",
+        category: "FLEXIBLE",
         label: "Dining & Entertainment",
         monthlyAmount: "500.00",
-        isEssential: false,
+        isVariable: false,
         provenance: "USER_ENTERED",
       },
     }),
     prisma.expense.create({
       data: {
         userId: alice.id,
-        category: "ESSENTIAL_FIXED",
+        category: "ESSENTIAL",
         label: "Student Loan + Car Payments",
         monthlyAmount: "750.00",
         stressMonthlyAmount: "750.00",
-        isEssential: true,
+        isVariable: false,
         provenance: "SYSTEM_DEFAULT",
       },
     }),
@@ -430,13 +430,13 @@ async function main() {
     },
   });
 
-  // ── Bob's Assets (CASH_CHECKING, SAVINGS) ──────────────
+  // ── Bob's Assets (CASH_SAVINGS) ──────────────────
 
   const bobAssets = await Promise.all([
     prisma.asset.create({
       data: {
         userId: bob.id,
-        category: "CASH_CHECKING",
+        category: "CASH_SAVINGS",
         label: "Wells Fargo Checking",
         value: "3200.00",
         isLiquid: true,
@@ -446,7 +446,7 @@ async function main() {
     prisma.asset.create({
       data: {
         userId: bob.id,
-        category: "SAVINGS",
+        category: "CASH_SAVINGS",
         label: "Marcus Savings",
         value: "8000.00",
         isLiquid: true,
@@ -456,7 +456,7 @@ async function main() {
     }),
   ]);
 
-  // ── Bob's Liabilities (CREDIT_CARD, PERSONAL_LOAN) ─────
+  // ── Bob's Liabilities (CREDIT_CARD, LOAN) ─────
 
   await Promise.all([
     prisma.liability.create({
@@ -473,7 +473,7 @@ async function main() {
     prisma.liability.create({
       data: {
         userId: bob.id,
-        category: "PERSONAL_LOAN",
+        category: "LOAN",
         label: "SoFi Personal Loan",
         balance: "10000.00",
         annualInterestRate: "0.0899",
@@ -484,13 +484,13 @@ async function main() {
     }),
   ]);
 
-  // ── Bob's Incomes (GROSS, FALLBACK) ────────────────────
+  // ── Bob's Incomes (SALARY, BENEFITS) ────────────────────
 
   await Promise.all([
     prisma.income.create({
       data: {
         userId: bob.id,
-        category: "GROSS",
+        category: "SALARY",
         label: "Marketing Manager Salary",
         monthlyAmount: "6500.00",
         isGuaranteed: true,
@@ -500,7 +500,7 @@ async function main() {
     prisma.income.create({
       data: {
         userId: bob.id,
-        category: "FALLBACK",
+        category: "BENEFITS",
         label: "Estimated Unemployment Benefits",
         monthlyAmount: "2400.00",
         isGuaranteed: false,
@@ -509,26 +509,26 @@ async function main() {
     }),
   ]);
 
-  // ── Bob's Expenses (ESSENTIAL_FIXED, DISCRETIONARY) ────
+  // ── Bob's Expenses (ESSENTIAL, FLEXIBLE) ────
 
   await Promise.all([
     prisma.expense.create({
       data: {
         userId: bob.id,
-        category: "ESSENTIAL_FIXED",
+        category: "ESSENTIAL",
         label: "Rent + Insurance",
         monthlyAmount: "2100.00",
-        isEssential: true,
+        isVariable: false,
         provenance: "USER_ENTERED",
       },
     }),
     prisma.expense.create({
       data: {
         userId: bob.id,
-        category: "DISCRETIONARY",
+        category: "FLEXIBLE",
         label: "Subscriptions & Fun",
         monthlyAmount: "350.00",
-        isEssential: false,
+        isVariable: false,
         provenance: "USER_ESTIMATED",
       },
     }),
